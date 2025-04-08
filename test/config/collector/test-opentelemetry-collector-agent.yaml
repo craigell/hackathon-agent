@@ -1,21 +1,26 @@
 receivers:
-  hostmetrics:
-    collection_interval: 1m0s
-    initial_delay: 1s
-    scrapers:
-      cpu:
-        metrics:
-          system.cpu.utilization:
-            enabled: true
-          system.cpu.logical.count:
-            enabled: true
-      disk:
-      filesystem:
-      memory:
-        metrics:
-          system.memory.limit:
-            enabled: true
-      network:
+  filelog:
+    include:
+      - /var/log/nginx/access.log
+      - /var/log/nginx/error.log
+      - /var/log/nginx-agent/agent.log
+#  hostmetrics:
+#    collection_interval: 1m0s
+#    initial_delay: 1s
+#    scrapers:
+#      cpu:
+#        metrics:
+#          system.cpu.utilization:
+#            enabled: true
+#          system.cpu.logical.count:
+#            enabled: true
+#      disk:
+#      filesystem:
+#      memory:
+#        metrics:
+#          system.memory.limit:
+#            enabled: true
+#      network:
   otlp/0:
     protocols:
       grpc:
@@ -90,7 +95,7 @@ extensions:
 service:
   telemetry:
     logs:
-      level: INFO
+      level: DEBUG
       output_paths: ["/var/log/nginx-agent/opentelemetry-collector-agent.log"]
       error_output_paths: ["/var/log/nginx-agent/opentelemetry-collector-agent.log"]
   extensions:
@@ -111,10 +116,11 @@ service:
         - debug
     logs:
       receivers:
+        - filelog
         - tcplog/0
       processors:
         - resource
         - batch
       exporters:
-        - otlp/0
         - debug
+        - otlp/0

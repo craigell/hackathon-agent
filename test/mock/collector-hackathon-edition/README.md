@@ -1,20 +1,18 @@
 # 🎉🎉🎉 Mock Management OTel Collector -- Hackathon Edition🎉🎉🎉
 
-There are 3 images that need to be built in order to use the mock management OTel collector
+There are 2 images that need to be built in order to use the mock management OTel collector
 * Agent with NGINX Plus image
-* Agent with NGINX OSS image
 * Custom OTel collector image
 
 To build & run these images run the following
 ```
-run-mock-collector-hackathon-edition
+> make run-mock-collector-hackathon-edition
 ```
 
-Once everything is started there should be 7 containers running
+Once everything is started there should be 5 containers running
 ```
-CONTAINER ID  IMAGE                                                   COMMAND               CREATED         STATUS         PORTS                                          mock-collector-agent-with-nginx-plus-and-nap
+CONTAINER ID  IMAGE                                                   COMMAND               CREATED         STATUS         PORTS                                         
 f4e7264ceb0b  localhost/nginx_plus_agent_ubuntu_22.04:latest                                15 seconds ago  Up 16 seconds  80/tcp, 443/tcp                                 mock-collector-agent-with-nginx-plus
-97e9e84679a2  localhost/nginx_oss_agent_ubuntu_22.04:latest                                 14 seconds ago  Up 14 seconds  80/tcp, 443/tcp                                 mock-collector-agent-with-nginx-oss
 04a3bce14c7a  localhost/mock-collector:latest                         /mock-management-...  12 seconds ago  Up 13 seconds  0.0.0.0:4320->4317/tcp, 0.0.0.0:9775->9090/tcp  mock-collector-otel-collector
 8efe150cbd96  docker.io/prom/prometheus:latest                        --config.file=/et...  11 seconds ago  Up 11 seconds  0.0.0.0:9090->9090/tcp, 9090/tcp                mock-collector-prometheus
 e55572131d2a  docker.io/grafana/grafana:latest                                              9 seconds ago   Up 10 seconds  0.0.0.0:3002->3000/tcp, 3000/tcp                mock-collector-grafana

@@ -126,11 +126,6 @@ func (oc *Collector) Init(ctx context.Context, mp bus.MessagePipeInterface) erro
 		return errors.New("OTel collector already running")
 	}
 
-	bootErr := oc.bootup(runCtx)
-	if bootErr != nil {
-		slog.ErrorContext(runCtx, "Unable to start OTel Collector", "error", bootErr)
-	}
-
 	return nil
 }
 
