@@ -1,0 +1,45 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+        auth:
+          authenticator: headers_check
+exporters:
+  prometheus:
+    endpoint: "0.0.0.0:9775"
+    resource_to_telemetry_conversion:
+      enabled: true
+    add_metric_suffixes: false
+  debug:
+    verbosity: detailed
+    sampling_initial: 5
+    sampling_thereafter: 200
+  otlphttp:
+    endpoint: http://loki:3100/otlp
+
+processors:
+  batch:
+  resource:
+    attributes:
+      - key: service.name
+        value: "nginx.app.protect"
+        action: insert
+
+extensions:
+  headers_check:
+
+service:
+  telemetry:
+    logs:
+      level: "debug"
+  extensions: [ headers_check ]
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheus]
+    logs:
+      receivers: [otlp]
+      processors: [resource, batch]
+      exporters: [otlphttp]

@@ -190,6 +190,18 @@ run-mock-management-grpc-server: ## Run mock management plane gRPC server
 	@echo "🖲️ Running mock management plane gRPC server"
 	$(GORUN) test/mock/grpc/cmd/main.go -configDirectory=$(MOCK_MANAGEMENT_PLANE_CONFIG_DIRECTORY) -logLevel=$(MOCK_MANAGEMENT_PLANE_LOG_LEVEL) -grpcAddress=$(MOCK_MANAGEMENT_PLANE_GRPC_ADDRESS) -apiAddress=$(MOCK_MANAGEMENT_PLANE_API_ADDRESS)
 
+run-mock-collector-hackathon-edition: local-deb-package build-test-oss-image build-test-plus-image build-mock-management-otel-collector-image
+	@echo "🚀 Running mock management plane OTel collector --- Hackathon Edition 💻"
+	AGENT_IMAGE_WITH_NGINX_PLUS=nginx_plus_$(IMAGE_TAG):latest $(CONTAINER_COMPOSE) -f ./test/mock/collector-hackathon-edition/docker-compose.yaml up -d
+
+run-mock-management-plane-hackathon-edition:
+	@echo "🖲️ Running mock management plane gRPC server --- Hackathon Edition 💻"
+	$(GORUN) test/mock/grpc/cmd/main.go -configDirectory=$(MOCK_MANAGEMENT_PLANE_CONFIG_DIRECTORY) -logLevel=$(MOCK_MANAGEMENT_PLANE_LOG_LEVEL) -grpcAddress=127.0.0.1:9091 -apiAddress=127.0.0.1:9092
+
+stop-mock-management-otel-collector-hackathon-edition: ## Stop running mock management plane OTel collector
+	@echo "Stopping mock management plane OTel collector"
+	AGENT_IMAGE_WITH_NGINX_PLUS=nginx_plus_$(IMAGE_TAG):latest $(CONTAINER_COMPOSE) -f ./test/mock/collector-hackathon-edition/docker-compose.yaml down
+
 
 .PHONY: build-test-nginx-plus-and-nap-image
 build-test-nginx-plus-and-nap-image:
