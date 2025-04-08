@@ -12,3 +12,8 @@ datasources:
     uid: otel-loki-scraper
     access: proxy
     url: http://loki:3100
+  - name: Infinity DataSource
+    type: yesoreyeram-infinity-datasource
+    jsonData:
+      customHealthCheckEnabled: true
+      customHealthCheckUrl: 'http://agent-with-nginx-plus:9011/health'

@@ -9,7 +9,7 @@ GOINST  = $(GOCMD) install
 GOGEN   = $(GOCMD) generate
 GOVET   = $(GOCMD) vet
 GOBIN 	?= $$(go env GOPATH)/bin
-
+GOPROXY=direct
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # https://docs.nginx.com/nginx/releases/                                                                                          #
 # These images are based on https://github.com/nginxinc/docker-nginx and are NOT recommended for production                       #

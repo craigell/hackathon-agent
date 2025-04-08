@@ -15,6 +15,9 @@ services:
       - ./nginx-agent.conf:/etc/nginx-agent/nginx-agent.conf
       - ./nginx-plus/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx-plus/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+    hostname: agent-with-nginx-plus
+    ports:
+      - "9011:9011"
     networks:
       - metrics
 

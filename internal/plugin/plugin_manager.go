@@ -15,6 +15,7 @@ import (
 	"github.com/nginx/agent/v3/internal/grpc"
 	"github.com/nginx/agent/v3/internal/resource"
 
+	"github.com/nginx/agent/v3/internal/api"
 	"github.com/nginx/agent/v3/internal/bus"
 	"github.com/nginx/agent/v3/internal/config"
 	"github.com/nginx/agent/v3/internal/watcher"
@@ -27,6 +28,7 @@ func LoadPlugins(ctx context.Context, agentConfig *config.Config) []bus.Plugin {
 	plugins = addCommandAndFilePlugins(ctx, plugins, agentConfig)
 	plugins = addCollectorPlugin(ctx, agentConfig, plugins)
 	plugins = addWatcherPlugin(plugins, agentConfig)
+	plugins = addAgentAPIPlugin(plugins)
 
 	return plugins
 }
@@ -35,6 +37,13 @@ func addResourcePlugin(plugins []bus.Plugin, agentConfig *config.Config) []bus.P
 	resourcePlugin := resource.NewResource(agentConfig)
 	plugins = append(plugins, resourcePlugin)
 
+	return plugins
+}
+
+func addAgentAPIPlugin(plugins []bus.Plugin) []bus.Plugin {
+	agentAPIPlugin := api.NewAgentAPI()
+	plugins = append(plugins, agentAPIPlugin)
+	
 	return plugins
 }
 
