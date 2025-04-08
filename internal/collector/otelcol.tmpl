@@ -1,4 +1,9 @@
 receivers:
+  filelog:
+    include:
+      - /var/log/nginx/access.log 
+      - /var/log/nginx/error.log 
+      - /var/log/nginx-agent/agent.log
 {{- if ne .Receivers.HostMetrics nil }}
   hostmetrics:
     {{- if .Receivers.HostMetrics.CollectionInterval }}
@@ -265,13 +270,15 @@ service:
         {{- if ne .Exporters.Debug nil }}
         - debug
         {{- end  }}
-    {{- end }}    
-    {{- if gt (len .Receivers.TcplogReceivers) 0 }}
+    {{- end }}
     logs:
       receivers:
+        - filelog
+        {{- if gt (len .Receivers.TcplogReceivers) 0 }}
         {{- range $index, $tcplogReceiver := .Receivers.TcplogReceivers }}
         - tcplog/{{$index}}
         {{- end }}
+        {{- end }} 
       processors:
         {{- if ne .Processors.Resource nil }}
         {{- if .Processors.Resource.Attributes }}
@@ -282,10 +289,10 @@ service:
         - batch
         {{- end }}
       exporters:
+        - debug
         {{- range $index, $otlpExporter := .Exporters.OtlpExporters }}
         - otlp/{{$index}}
         {{- end }}
         {{- if ne .Exporters.Debug nil }}
         - debug
         {{- end  }}
-    {{- end  }}

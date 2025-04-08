@@ -19,6 +19,7 @@ import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/redactionprocessor"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/tcplogreceiver"
 	"go.opentelemetry.io/collector/component"
@@ -95,6 +96,7 @@ func createExtensionFactories() (map[component.Type]extension.Factory, error) {
 
 func createReceiverFactories() (map[component.Type]receiver.Factory, error) {
 	receiverList := []receiver.Factory{
+		filelogreceiver.NewFactory(),
 		otlpreceiver.NewFactory(),
 		hostmetricsreceiver.NewFactory(),
 		nginxreceiver.NewFactory(),
