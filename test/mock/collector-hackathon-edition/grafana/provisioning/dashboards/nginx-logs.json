@@ -58,16 +58,6 @@
                     "expr": "{service_name=\"nginx.agent\"} |= ``",
                     "queryType": "range",
                     "refId": "A"
-                },
-                {
-                    "datasource": {
-                        "name": "Expression",
-                        "type": "__expr__",
-                        "uid": "__expr__"
-                    },
-                    "hide": false,
-                    "refId": "B",
-                    "type": "math"
                 }
             ],
             "title": "NGINX Plus Access + Error Logs",
@@ -174,6 +164,6 @@
     "timezone": "browser",
     "title": "NGINX Plus Logs",
     "uid": "beiasbp4mq4n4b",
-    "version": 8,
+    "version": 9,
     "weekStart": ""
 }
