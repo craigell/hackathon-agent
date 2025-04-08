@@ -6,10 +6,10 @@ There are 2 images that need to be built in order to use the mock management OTe
 
 To build & run these images run the following
 ```
-run-mock-collector-hackathon-edition
+> make run-mock-collector-hackathon-edition
 ```
 
-Once everything is started there should be 7 containers running
+Once everything is started there should be 5 containers running
 ```
 CONTAINER ID  IMAGE                                                   COMMAND               CREATED         STATUS         PORTS                                         
 f4e7264ceb0b  localhost/nginx_plus_agent_ubuntu_22.04:latest                                15 seconds ago  Up 16 seconds  80/tcp, 443/tcp                                 mock-collector-agent-with-nginx-plus
