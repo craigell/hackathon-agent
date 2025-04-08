@@ -53,8 +53,6 @@ func (a *AgentAPIPlugin) Info() *bus.Info {
 
 func (a *AgentAPIPlugin) Process(ctx context.Context, msg *bus.Message) {
 	switch msg.Topic {
-	case bus.ConnectionCreatedTopic:
-		slog.InfoContext(ctx, "Received connection created event")
 	case bus.InstanceHealthTopic:
 		a.test = append(a.test, "hello")
 		slog.InfoContext(ctx, "Received instance health event")
@@ -75,7 +73,6 @@ func (a *AgentAPIPlugin) handleInstanceHealthTopic(ctx context.Context, msg *bus
 func (a *AgentAPIPlugin) Subscriptions() []string {
 	return []string{
 		bus.InstanceHealthTopic,
-		bus.ConnectionCreatedTopic,
 	}
 }
 

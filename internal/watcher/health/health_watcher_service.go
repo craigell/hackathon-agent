@@ -26,6 +26,7 @@ import (
 type (
 	healthWatcherOperator interface {
 		Health(ctx context.Context, instance *mpi.Instance) (*mpi.InstanceHealth, error)
+		SetConnected(connected bool)
 	}
 
 	HealthWatcherService struct {
@@ -34,6 +35,7 @@ type (
 		watchers           map[string]healthWatcherOperator // key is instanceID
 		instances          map[string]*mpi.Instance         // key is instanceID
 		healthWatcherMutex sync.Mutex
+		agentID            string
 	}
 
 	InstanceHealthMessage struct {
@@ -60,6 +62,9 @@ func (hw *HealthWatcherService) AddHealthWatcher(instances []*mpi.Instance) {
 			watcher := NewNginxHealthWatcher()
 			hw.watchers[instance.GetInstanceMeta().GetInstanceId()] = watcher
 		case mpi.InstanceMeta_INSTANCE_TYPE_AGENT:
+			watcher := NewAgentHealthWatcher()
+			hw.watchers[instance.GetInstanceMeta().GetInstanceId()] = watcher
+			hw.agentID = instance.GetInstanceMeta().GetInstanceId()
 		case mpi.InstanceMeta_INSTANCE_TYPE_UNSPECIFIED,
 			mpi.InstanceMeta_INSTANCE_TYPE_UNIT,
 			mpi.InstanceMeta_INSTANCE_TYPE_NGINX_APP_PROTECT:
@@ -213,4 +218,12 @@ func (hw *HealthWatcherService) compareHealth(currentHealth map[string]*mpi.Inst
 	}
 
 	return false
+}
+
+func (hw *HealthWatcherService) SetAgentHealth(connected bool) {
+	if hw.watchers[hw.agentID] != nil {
+		hw.healthWatcherMutex.Lock()
+		hw.watchers[hw.agentID].SetConnected(connected)
+		hw.healthWatcherMutex.Unlock()
+	}
 }

@@ -9,6 +9,7 @@ import (
 	"context"
 	"log/slog"
 	"sync"
+	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 
@@ -63,6 +64,7 @@ func (cp *CommandPlugin) Init(ctx context.Context, messagePipe bus.MessagePipeIn
 	cp.commandService = NewCommandService(cp.conn.CommandServiceClient(), cp.config, cp.subscribeChannel)
 
 	go cp.monitorSubscribeChannel(ctx)
+	go cp.watchConnection(ctx)
 
 	return nil
 }
@@ -113,6 +115,26 @@ func (cp *CommandPlugin) processResourceUpdate(ctx context.Context, msg *bus.Mes
 			}
 		}
 	}
+}
+
+func (cp *CommandPlugin) watchConnection(ctx context.Context) {
+	slog.InfoContext(context.Background(), "Watching connection status")
+	connectionTicker := time.NewTicker(5 * time.Second)
+	defer connectionTicker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-connectionTicker.C:
+			if !cp.commandService.IsConnected() {
+				cp.messagePipe.Process(ctx, &bus.Message{
+					Topic: bus.ConnectionLostTopic,
+				})
+			}
+		}
+	}
+
 }
 
 func (cp *CommandPlugin) createConnection(ctx context.Context, resource *mpi.Resource) {

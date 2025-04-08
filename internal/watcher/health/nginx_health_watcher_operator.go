@@ -8,6 +8,7 @@ package health
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	mpi "github.com/nginx/agent/v3/api/grpc/mpi/v1"
 	"github.com/nginx/agent/v3/internal/datasource/host/exec"
@@ -18,6 +19,10 @@ import (
 type NginxHealthWatcher struct {
 	executer        exec.ExecInterface
 	processOperator processwatcher.ProcessOperatorInterface
+}
+
+func (nhw *NginxHealthWatcher) SetConnected(connected bool) {
+	slog.Debug("connected", "", connected)
 }
 
 var _ healthWatcherOperator = (*NginxHealthWatcher)(nil)
