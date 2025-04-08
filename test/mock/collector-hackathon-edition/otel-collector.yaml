@@ -23,7 +23,7 @@ processors:
   resource:
     attributes:
       - key: service.name
-        value: "nginx.app.protect"
+        value: "nginx.agent"
         action: insert
 
 extensions:
@@ -38,8 +38,8 @@ service:
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [prometheus]
+      exporters: [debug, prometheus]
     logs:
       receivers: [otlp]
       processors: [resource, batch]
-      exporters: [otlphttp]
+      exporters: [debug, otlphttp]
