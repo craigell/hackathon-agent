@@ -8,7 +8,6 @@ package health
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"sync"
 
 	mpi "github.com/nginx/agent/v3/api/grpc/mpi/v1"
@@ -43,7 +42,6 @@ func (ahw *AgentHealthWatcher) Health(_ context.Context, instance *mpi.Instance)
 }
 
 func (ahw *AgentHealthWatcher) SetConnected(connected bool) {
-	slog.InfoContext(context.Background(), "Agent health watcher is set to connected")
 	ahw.mutex.Lock()
 	ahw.connected = connected
 	ahw.mutex.Unlock()

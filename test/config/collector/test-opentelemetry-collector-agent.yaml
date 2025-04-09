@@ -1,9 +1,9 @@
 receivers:
   filelog:
     include:
-      - /var/log/nginx/access.log
-      - /var/log/nginx/error.log
-      - /var/log/nginx-agent/agent.log
+      - /var/log/nginx-agent/temp-agent/nginx_access.log
+      - /var/log/nginx-agent/temp-agent/nginx_error.log
+      - /var/log/nginx-agent/temp-agent/agent.log
 #  hostmetrics:
 #    collection_interval: 1m0s
 #    initial_delay: 1s

@@ -12,6 +12,7 @@ const (
 	ResourceUpdateTopic          = "resource-update"
 	NginxConfigUpdateTopic       = "nginx-config-update"
 	InstanceHealthTopic          = "instance-health"
+	BadInstanceHealthTopic       = "bad-instance-health"
 	ConfigUploadRequestTopic     = "config-upload-request"
 	DataPlaneResponseTopic       = "data-plane-response"
 	ConnectionCreatedTopic       = "connection-created"
