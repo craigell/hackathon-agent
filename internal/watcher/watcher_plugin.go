@@ -131,7 +131,7 @@ func (w *Watcher) Process(ctx context.Context, msg *bus.Message) {
 	switch msg.Topic {
 	case bus.CredentialUpdatedTopic:
 		w.handleCredentialUpdate(ctx)
-	case bus.ConnectionCreatedTopic:
+	case bus.ConnectionReconnectedTopic:
 		w.handleConnectionCreated(ctx, msg)
 	case bus.ConnectionLostTopic:
 		w.handleConnectionLost(ctx, msg)
@@ -155,8 +155,8 @@ func (*Watcher) Subscriptions() []string {
 		bus.ConfigApplySuccessfulTopic,
 		bus.ConfigApplyCompleteTopic,
 		bus.DataPlaneHealthRequestTopic,
-		bus.ConnectionCreatedTopic,
 		bus.ConnectionLostTopic,
+		bus.ConnectionReconnectedTopic,
 	}
 }
 
@@ -164,7 +164,6 @@ func (w *Watcher) handleConnectionCreated(ctx context.Context, _ *bus.Message) {
 	slog.InfoContext(ctx, "Watcher plugin handle connection created")
 
 	w.healthWatcherService.SetAgentHealth(true)
-
 }
 
 func (w *Watcher) handleConnectionLost(ctx context.Context, _ *bus.Message) {

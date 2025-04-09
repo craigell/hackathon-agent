@@ -119,7 +119,8 @@ func (cp *CommandPlugin) processResourceUpdate(ctx context.Context, msg *bus.Mes
 
 func (cp *CommandPlugin) watchConnection(ctx context.Context) {
 	slog.InfoContext(context.Background(), "Watching connection status")
-	connectionTicker := time.NewTicker(5 * time.Second)
+	previousVal := cp.commandService.IsConnected()
+	connectionTicker := time.NewTicker(2 * time.Second)
 	defer connectionTicker.Stop()
 
 	for {
@@ -127,14 +128,24 @@ func (cp *CommandPlugin) watchConnection(ctx context.Context) {
 		case <-ctx.Done():
 			return
 		case <-connectionTicker.C:
-			if !cp.commandService.IsConnected() {
-				cp.messagePipe.Process(ctx, &bus.Message{
-					Topic: bus.ConnectionLostTopic,
-				})
+			currentVal := cp.commandService.IsConnected()
+			if previousVal != currentVal {
+				if previousVal == true {
+					slog.InfoContext(ctx, "Connection status changed to unconnected")
+					cp.messagePipe.Process(ctx, &bus.Message{
+						Topic: bus.ConnectionLostTopic,
+					})
+					previousVal = currentVal
+				} else if previousVal == false {
+					slog.InfoContext(ctx, "Connection status changed to connected")
+					cp.messagePipe.Process(ctx, &bus.Message{
+						Topic: bus.ConnectionReconnectedTopic,
+					})
+					previousVal = currentVal
+				}
 			}
 		}
 	}
-
 }
 
 func (cp *CommandPlugin) createConnection(ctx context.Context, resource *mpi.Resource) {

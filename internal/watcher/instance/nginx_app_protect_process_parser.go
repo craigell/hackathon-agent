@@ -63,7 +63,7 @@ func (n NginxAppProtectProcessParser) Parse(
 			instanceMap[instanceID] = &mpi.Instance{
 				InstanceMeta: &mpi.InstanceMeta{
 					InstanceId:   instanceID,
-					InstanceType: mpi.InstanceMeta_INSTANCE_TYPE_NGINX_APP_PROTECT,
+					InstanceType: mpi.InstanceType_INSTANCE_TYPE_NGINX_APP_PROTECT,
 					Version:      n.instanceVersion(ctx),
 				},
 				InstanceConfig: &mpi.InstanceConfig{},

@@ -38,6 +38,7 @@ func (nhw *NginxHealthWatcher) Health(ctx context.Context, instance *mpi.Instanc
 	health := &mpi.InstanceHealth{
 		InstanceId:           instance.GetInstanceMeta().GetInstanceId(),
 		InstanceHealthStatus: mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_HEALTHY,
+		InstanceType:         instance.GetInstanceMeta().GetInstanceType(),
 	}
 
 	proc, err := nhw.processOperator.Process(ctx, instance.GetInstanceRuntime().GetProcessId())

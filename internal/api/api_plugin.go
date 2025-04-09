@@ -2,15 +2,16 @@ package api
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
-	mpi "github.com/nginx/agent/v3/api/grpc/mpi/v1"
-	"github.com/nginx/agent/v3/internal/bus"
-	sloggin "github.com/samber/slog-gin"
 	"log/slog"
 	"net"
 	"net/http"
 	"os"
 	"sync"
+
+	"github.com/gin-gonic/gin"
+	mpi "github.com/nginx/agent/v3/api/grpc/mpi/v1"
+	"github.com/nginx/agent/v3/internal/bus"
+	sloggin "github.com/samber/slog-gin"
 )
 
 var _ bus.Plugin = (*AgentAPIPlugin)(nil)
@@ -25,7 +26,6 @@ type AgentAPIPlugin struct {
 }
 
 func NewAgentAPI() *AgentAPIPlugin {
-
 	return &AgentAPIPlugin{
 		apiAddress: "0.0.0.0:9011",
 		healths:    []*mpi.InstanceHealth{},

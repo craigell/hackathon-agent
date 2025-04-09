@@ -8,9 +8,10 @@ package health
 import (
 	"context"
 	"fmt"
-	mpi "github.com/nginx/agent/v3/api/grpc/mpi/v1"
 	"log/slog"
 	"sync"
+
+	mpi "github.com/nginx/agent/v3/api/grpc/mpi/v1"
 )
 
 type AgentHealthWatcher struct {
@@ -30,10 +31,11 @@ func (ahw *AgentHealthWatcher) Health(_ context.Context, instance *mpi.Instance)
 	health := &mpi.InstanceHealth{
 		InstanceId:           instance.GetInstanceMeta().GetInstanceId(),
 		InstanceHealthStatus: mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_HEALTHY,
+		InstanceType:         instance.GetInstanceMeta().GetInstanceType(),
 	}
 	ahw.mutex.Lock()
 	if !ahw.connected {
-		health.InstanceHealthStatus = mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_UNHEALTHY
+		health.InstanceHealthStatus = mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_DEGRADED
 		health.Description = fmt.Sprintf("Agent is not currentlty connected to a Management Plane")
 	}
 	ahw.mutex.Unlock()

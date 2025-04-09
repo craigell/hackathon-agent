@@ -106,9 +106,9 @@ func (i *NginxInstanceOperator) Reload(ctx context.Context, instance *mpi.Instan
 }
 
 func (i *NginxInstanceOperator) errorLogs(instance *mpi.Instance) (errorLogs []string) {
-	if instance.GetInstanceMeta().GetInstanceType() == mpi.InstanceMeta_INSTANCE_TYPE_NGINX_PLUS {
+	if instance.GetInstanceMeta().GetInstanceType() == mpi.InstanceType_INSTANCE_TYPE_NGINX_PLUS {
 		errorLogs = instance.GetInstanceRuntime().GetNginxPlusRuntimeInfo().GetErrorLogs()
-	} else if instance.GetInstanceMeta().GetInstanceType() == mpi.InstanceMeta_INSTANCE_TYPE_NGINX {
+	} else if instance.GetInstanceMeta().GetInstanceType() == mpi.InstanceType_INSTANCE_TYPE_NGINX {
 		errorLogs = instance.GetInstanceRuntime().GetNginxRuntimeInfo().GetErrorLogs()
 	}
 

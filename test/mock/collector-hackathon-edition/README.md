@@ -4,11 +4,16 @@ There are 2 images that need to be built in order to use the mock management OTe
 * Agent with NGINX Plus image
 * Custom OTel collector image
 
-To build & run these images run the following
+To build & run these images run the following 
+(The agent expects certs for plus to be located in a certs folder in the build dir of the agent /build/certs)
 ```
 > make run-mock-collector-hackathon-edition
 ```
 
+Then to start the mock management plane run the following
+```
+> make run-mock-management-plane-hackathon-edition
+```
 Once everything is started there should be 5 containers running
 ```
 CONTAINER ID  IMAGE                                                   COMMAND               CREATED         STATUS         PORTS                                         
@@ -24,5 +29,5 @@ To view the metrics & logs, the grafana UI can be used by accessing this URL htt
 
 To stop everything run the following
 ```
-make stop-mock-management-otel-collector-hackathon-edition
+> make stop-mock-management-otel-collector-hackathon-edition
 ```

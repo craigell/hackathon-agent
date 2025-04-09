@@ -58,16 +58,16 @@ func (hw *HealthWatcherService) AddHealthWatcher(instances []*mpi.Instance) {
 	defer hw.healthWatcherMutex.Unlock()
 	for _, instance := range instances {
 		switch instance.GetInstanceMeta().GetInstanceType() {
-		case mpi.InstanceMeta_INSTANCE_TYPE_NGINX, mpi.InstanceMeta_INSTANCE_TYPE_NGINX_PLUS:
+		case mpi.InstanceType_INSTANCE_TYPE_NGINX, mpi.InstanceType_INSTANCE_TYPE_NGINX_PLUS:
 			watcher := NewNginxHealthWatcher()
 			hw.watchers[instance.GetInstanceMeta().GetInstanceId()] = watcher
-		case mpi.InstanceMeta_INSTANCE_TYPE_AGENT:
+		case mpi.InstanceType_INSTANCE_TYPE_AGENT:
 			watcher := NewAgentHealthWatcher()
 			hw.watchers[instance.GetInstanceMeta().GetInstanceId()] = watcher
 			hw.agentID = instance.GetInstanceMeta().GetInstanceId()
-		case mpi.InstanceMeta_INSTANCE_TYPE_UNSPECIFIED,
-			mpi.InstanceMeta_INSTANCE_TYPE_UNIT,
-			mpi.InstanceMeta_INSTANCE_TYPE_NGINX_APP_PROTECT:
+		case mpi.InstanceType_INSTANCE_TYPE_UNSPECIFIED,
+			mpi.InstanceType_INSTANCE_TYPE_UNIT,
+			mpi.InstanceType_INSTANCE_TYPE_NGINX_APP_PROTECT:
 			fallthrough
 		default:
 			slog.Warn("Health watcher not implemented", "instance_type",
@@ -144,6 +144,7 @@ func (hw *HealthWatcherService) health(ctx context.Context) (updatedStatuses []*
 				InstanceHealthStatus: mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_UNSPECIFIED,
 				Description: fmt.Sprintf("failed to get health for instance %s, error: %s",
 					instanceID, err.Error()),
+				InstanceType: hw.instances[instanceID].GetInstanceMeta().GetInstanceType(),
 			}
 		}
 		allStatuses = append(allStatuses, instanceHealth)
@@ -187,11 +188,12 @@ func (hw *HealthWatcherService) compareCache(healthStatuses []*mpi.InstanceHealt
 
 	if len(hw.cache) != len(hw.instances) {
 		for instanceID := range hw.cache {
-			if _, ok := hw.instances[instanceID]; !ok {
+			if instance, ok := hw.instances[instanceID]; !ok {
 				health := &mpi.InstanceHealth{
 					InstanceId:           instanceID,
 					InstanceHealthStatus: mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_UNHEALTHY,
 					Description:          fmt.Sprintf("instance %s not found", instanceID),
+					InstanceType:         instance.GetInstanceMeta().GetInstanceType(),
 				}
 				healthStatuses = append(healthStatuses, health)
 				delete(hw.cache, instanceID)
