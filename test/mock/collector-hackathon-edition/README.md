@@ -27,7 +27,15 @@ e55572131d2a  docker.io/grafana/grafana:latest                                  
 
 To view the metrics & logs, the grafana UI can be used by accessing this URL http://localhost:3002/login (Note: username/password is admin/admin)
 
+To view the status of the agent & instance exec into the  mock-collector-agent-with-nginx-plus docker container
+
+```
+> curl http://0.0.0.0:9094/health
+```
+
 To stop everything run the following
 ```
 > make stop-mock-management-otel-collector-hackathon-edition
 ```
+
+

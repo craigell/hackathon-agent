@@ -27,7 +27,7 @@ type AgentAPIPlugin struct {
 
 func NewAgentAPI() *AgentAPIPlugin {
 	return &AgentAPIPlugin{
-		apiAddress: "0.0.0.0:9011",
+		apiAddress: "0.0.0.0:9094",
 		healths:    []*mpi.InstanceHealth{},
 	}
 }
