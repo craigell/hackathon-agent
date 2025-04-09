@@ -6,12 +6,12 @@ import (
 	mpi "github.com/nginx/agent/v3/api/grpc/mpi/v1"
 	"github.com/nginx/agent/v3/internal/bus"
 	sloggin "github.com/samber/slog-gin"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"log/slog"
 	"net"
 	"net/http"
 	"os"
 	"sync"
+	"time"
 )
 
 var _ bus.Plugin = (*AgentAPIPlugin)(nil)
@@ -21,14 +21,22 @@ type AgentAPIPlugin struct {
 	server      *gin.Engine
 	messagePipe bus.MessagePipeInterface
 	mutex       sync.Mutex
-	healths     []*mpi.InstanceHealth
 	test        []string
+	health      []Health
+}
+
+type Health struct {
+	Status      int       `json:"health"`
+	Type        string    `json:"type"`
+	InstanceID  string    `json:"instance_id"`
+	Timestamp   time.Time `json:"timestamp"`
+	Description string    `json:"description"`
 }
 
 func NewAgentAPI() *AgentAPIPlugin {
 	return &AgentAPIPlugin{
 		apiAddress: "0.0.0.0:9095",
-		healths:    []*mpi.InstanceHealth{},
+		health:     make([]Health, 0),
 	}
 }
 
@@ -57,17 +65,17 @@ func (a *AgentAPIPlugin) Process(ctx context.Context, msg *bus.Message) {
 		a.test = append(a.test, "hello")
 		slog.InfoContext(ctx, "Received instance health event")
 		a.handleInstanceHealthTopic(ctx, msg)
-		slog.InfoContext(ctx, "Handled instance health event", "", a.healths)
+		slog.InfoContext(ctx, "Handled instance health event", "", a.health)
 	}
 }
 
 func (a *AgentAPIPlugin) handleInstanceHealthTopic(ctx context.Context, msg *bus.Message) {
 	if instances, ok := msg.Data.([]*mpi.InstanceHealth); ok {
 		if len(instances) > 0 {
-			a.healths = instances
+			a.convertHealth(instances)
 		}
 	}
-	slog.InfoContext(ctx, "Received health topic message", "health", a.healths)
+	slog.InfoContext(ctx, "Received health topic message", "health", a.health)
 }
 
 func (a *AgentAPIPlugin) Subscriptions() []string {
@@ -103,16 +111,44 @@ func (a *AgentAPIPlugin) Start() {
 
 func (a *AgentAPIPlugin) addAgentHealthEndpoint() {
 	a.server.GET("/health", func(c *gin.Context) {
-		slog.Info("Health endpoint added", "health", a.healths)
-		if a.healths == nil {
+		slog.Info("Health endpoint added", "health", a.health)
+		if a.health == nil {
 			c.JSON(http.StatusNotFound, nil)
 		} else {
-			for _, h := range a.healths {
-				h.Timestamp = timestamppb.Now()
-			}
+
 			a.mutex.Lock()
-			c.JSON(http.StatusOK, a.healths)
+			for _, h := range a.health {
+				h.Timestamp = time.Now()
+			}
+			c.JSON(http.StatusOK, a.health)
 			a.mutex.Unlock()
 		}
 	})
+}
+
+func (a *AgentAPIPlugin) convertHealth(instanceHealth []*mpi.InstanceHealth) {
+	a.health = make([]Health, 0)
+	for _, h := range instanceHealth {
+		status := 0
+
+		switch h.GetInstanceHealthStatus() {
+		case mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_HEALTHY:
+			status = 1
+		case mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_DEGRADED:
+			status = 3
+		case mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_UNHEALTHY:
+			status = 2
+		default:
+			status = 0
+		}
+
+		newHealth := Health{
+			Status:      status,
+			Type:        h.GetInstanceType().String(),
+			Timestamp:   time.Now(),
+			InstanceID:  h.GetInstanceId(),
+			Description: h.GetDescription(),
+		}
+		a.health = append(a.health, newHealth)
+	}
 }
