@@ -985,6 +985,7 @@ Instance Configuration options
 | instance_health_status | [InstanceHealth.InstanceHealthStatus](#mpi-v1-InstanceHealth-InstanceHealthStatus) |  | Health status |
 | description | [string](#string) |  | Provides a human readable context around why a health status is a particular state |
 | instance_type | [InstanceType](#mpi-v1-InstanceType) |  |  |
+| timestamp | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
 
 
 

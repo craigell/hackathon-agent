@@ -2,16 +2,16 @@ package api
 
 import (
 	"context"
+	"github.com/gin-gonic/gin"
+	mpi "github.com/nginx/agent/v3/api/grpc/mpi/v1"
+	"github.com/nginx/agent/v3/internal/bus"
+	sloggin "github.com/samber/slog-gin"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"log/slog"
 	"net"
 	"net/http"
 	"os"
 	"sync"
-
-	"github.com/gin-gonic/gin"
-	mpi "github.com/nginx/agent/v3/api/grpc/mpi/v1"
-	"github.com/nginx/agent/v3/internal/bus"
-	sloggin "github.com/samber/slog-gin"
 )
 
 var _ bus.Plugin = (*AgentAPIPlugin)(nil)
@@ -107,6 +107,9 @@ func (a *AgentAPIPlugin) addAgentHealthEndpoint() {
 		if a.healths == nil {
 			c.JSON(http.StatusNotFound, nil)
 		} else {
+			for _, h := range a.healths {
+				h.Timestamp = timestamppb.Now()
+			}
 			a.mutex.Lock()
 			c.JSON(http.StatusOK, a.healths)
 			a.mutex.Unlock()
