@@ -14,6 +14,7 @@ import "mpi/v1/common.proto";
 import "mpi/v1/files.proto";
 import "google/protobuf/struct.proto";
 import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
 
 // A service outlining the command and control options for a Data Plane Client
 // All operations are written from a client perspective
@@ -132,6 +133,8 @@ message InstanceHealth {
     string description = 3;
     
     InstanceType instance_type = 4;
+    
+    google.protobuf.Timestamp timestamp = 5;
 }
 
 // Health report of a set of instances
