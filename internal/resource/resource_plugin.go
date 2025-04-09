@@ -177,7 +177,7 @@ func (r *Resource) handleNginxPlusActionRequest(ctx context.Context, action *mpi
 		return
 	}
 
-	if instance.GetInstanceMeta().GetInstanceType() != mpi.InstanceMeta_INSTANCE_TYPE_NGINX_PLUS {
+	if instance.GetInstanceMeta().GetInstanceType() != mpi.InstanceType_INSTANCE_TYPE_NGINX_PLUS {
 		slog.ErrorContext(ctx, "Failed to preform API action", "error", errors.New("instance is not NGINX Plus"))
 		resp := response.CreateDataPlaneResponse(correlationID, mpi.CommandResponse_COMMAND_STATUS_FAILURE,
 			"", instanceID, "failed to preform API action, instance is not NGINX Plus")

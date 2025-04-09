@@ -47,6 +47,7 @@ type (
 		cancel                             context.CancelFunc
 		instancesWithConfigApplyInProgress []string
 		watcherMutex                       sync.Mutex
+		agentMutex                         sync.Mutex
 	}
 
 	instanceWatcherServiceInterface interface {
@@ -84,6 +85,7 @@ func NewWatcher(agentConfig *config.Config) *Watcher {
 		credentialUpdatesChannel:           make(chan credentials.CredentialUpdateMessage),
 		instancesWithConfigApplyInProgress: []string{},
 		watcherMutex:                       sync.Mutex{},
+		agentMutex:                         sync.Mutex{},
 	}
 }
 
@@ -129,6 +131,10 @@ func (w *Watcher) Process(ctx context.Context, msg *bus.Message) {
 	switch msg.Topic {
 	case bus.CredentialUpdatedTopic:
 		w.handleCredentialUpdate(ctx)
+	case bus.ConnectionReconnectedTopic:
+		w.handleConnectionCreated(ctx, msg)
+	case bus.ConnectionLostTopic:
+		w.handleConnectionLost(ctx, msg)
 	case bus.ConfigApplyRequestTopic:
 		w.handleConfigApplyRequest(ctx, msg)
 	case bus.ConfigApplySuccessfulTopic:
@@ -149,7 +155,21 @@ func (*Watcher) Subscriptions() []string {
 		bus.ConfigApplySuccessfulTopic,
 		bus.ConfigApplyCompleteTopic,
 		bus.DataPlaneHealthRequestTopic,
+		bus.ConnectionLostTopic,
+		bus.ConnectionReconnectedTopic,
 	}
+}
+
+func (w *Watcher) handleConnectionCreated(ctx context.Context, _ *bus.Message) {
+	slog.InfoContext(ctx, "Watcher plugin handle connection created")
+
+	w.healthWatcherService.SetAgentHealth(true)
+}
+
+func (w *Watcher) handleConnectionLost(ctx context.Context, _ *bus.Message) {
+	slog.InfoContext(ctx, "Watcher plugin handle connection lost")
+
+	w.healthWatcherService.SetAgentHealth(false)
 }
 
 func (w *Watcher) handleConfigApplyRequest(ctx context.Context, msg *bus.Message) {

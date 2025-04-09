@@ -1243,6 +1243,8 @@ func (m *InstanceHealth) validate(all bool) error {
 
 	// no validation rules for Description
 
+	// no validation rules for InstanceType
+
 	if len(errors) > 0 {
 		return InstanceHealthMultiError(errors)
 	}

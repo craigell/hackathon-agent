@@ -130,8 +130,8 @@ func (iw *InstanceWatcherService) ReparseConfig(ctx context.Context, instanceID 
 	instanceType := instance.GetInstanceMeta().GetInstanceType()
 	correlationID := logger.GetCorrelationIDAttr(ctx)
 
-	if instanceType == mpi.InstanceMeta_INSTANCE_TYPE_NGINX ||
-		instanceType == mpi.InstanceMeta_INSTANCE_TYPE_NGINX_PLUS {
+	if instanceType == mpi.InstanceType_INSTANCE_TYPE_NGINX ||
+		instanceType == mpi.InstanceType_INSTANCE_TYPE_NGINX_PLUS {
 		slog.DebugContext(
 			ctx,
 			"Reparsing NGINX instance config",
@@ -190,8 +190,8 @@ func (iw *InstanceWatcherService) checkForUpdates(
 			"instance_type", instanceType,
 		)
 
-		if instanceType == mpi.InstanceMeta_INSTANCE_TYPE_NGINX ||
-			instanceType == mpi.InstanceMeta_INSTANCE_TYPE_NGINX_PLUS {
+		if instanceType == mpi.InstanceType_INSTANCE_TYPE_NGINX ||
+			instanceType == mpi.InstanceType_INSTANCE_TYPE_NGINX_PLUS {
 			nginxConfigContext, parseErr := iw.nginxConfigParser.Parse(newCtx, newInstance)
 			if parseErr != nil {
 				slog.WarnContext(
@@ -297,7 +297,7 @@ func (iw *InstanceWatcherService) agentInstance(ctx context.Context) *mpi.Instan
 	return &mpi.Instance{
 		InstanceMeta: &mpi.InstanceMeta{
 			InstanceId:   iw.agentConfig.UUID,
-			InstanceType: mpi.InstanceMeta_INSTANCE_TYPE_AGENT,
+			InstanceType: mpi.InstanceType_INSTANCE_TYPE_AGENT,
 			Version:      iw.agentConfig.Version,
 		},
 		InstanceConfig: &mpi.InstanceConfig{
@@ -403,7 +403,7 @@ func (iw *InstanceWatcherService) updateNginxInstanceRuntime(
 	accessLogs := convertAccessLogs(nginxConfigContext.AccessLogs)
 	errorLogs := convertErrorLogs(nginxConfigContext.ErrorLogs)
 
-	if instanceType == mpi.InstanceMeta_INSTANCE_TYPE_NGINX_PLUS {
+	if instanceType == mpi.InstanceType_INSTANCE_TYPE_NGINX_PLUS {
 		nginxPlusRuntimeInfo := instance.GetInstanceRuntime().GetNginxPlusRuntimeInfo()
 
 		if nginxPlusRuntimeInfoEqual(nginxPlusRuntimeInfo, nginxConfigContext, accessLogs, errorLogs) {

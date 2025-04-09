@@ -23,6 +23,11 @@ type FakeHealthWatcherOperator struct {
 		result1 *v1.InstanceHealth
 		result2 error
 	}
+	SetConnectedStub        func(bool)
+	setConnectedMutex       sync.RWMutex
+	setConnectedArgsForCall []struct {
+		arg1 bool
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
@@ -92,11 +97,45 @@ func (fake *FakeHealthWatcherOperator) HealthReturnsOnCall(i int, result1 *v1.In
 	}{result1, result2}
 }
 
+func (fake *FakeHealthWatcherOperator) SetConnected(arg1 bool) {
+	fake.setConnectedMutex.Lock()
+	fake.setConnectedArgsForCall = append(fake.setConnectedArgsForCall, struct {
+		arg1 bool
+	}{arg1})
+	stub := fake.SetConnectedStub
+	fake.recordInvocation("SetConnected", []interface{}{arg1})
+	fake.setConnectedMutex.Unlock()
+	if stub != nil {
+		fake.SetConnectedStub(arg1)
+	}
+}
+
+func (fake *FakeHealthWatcherOperator) SetConnectedCallCount() int {
+	fake.setConnectedMutex.RLock()
+	defer fake.setConnectedMutex.RUnlock()
+	return len(fake.setConnectedArgsForCall)
+}
+
+func (fake *FakeHealthWatcherOperator) SetConnectedCalls(stub func(bool)) {
+	fake.setConnectedMutex.Lock()
+	defer fake.setConnectedMutex.Unlock()
+	fake.SetConnectedStub = stub
+}
+
+func (fake *FakeHealthWatcherOperator) SetConnectedArgsForCall(i int) bool {
+	fake.setConnectedMutex.RLock()
+	defer fake.setConnectedMutex.RUnlock()
+	argsForCall := fake.setConnectedArgsForCall[i]
+	return argsForCall.arg1
+}
+
 func (fake *FakeHealthWatcherOperator) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.healthMutex.RLock()
 	defer fake.healthMutex.RUnlock()
+	fake.setConnectedMutex.RLock()
+	defer fake.setConnectedMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

@@ -2,15 +2,16 @@ package api
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
-	mpi "github.com/nginx/agent/v3/api/grpc/mpi/v1"
-	"github.com/nginx/agent/v3/internal/bus"
-	sloggin "github.com/samber/slog-gin"
 	"log/slog"
 	"net"
 	"net/http"
 	"os"
 	"sync"
+
+	"github.com/gin-gonic/gin"
+	mpi "github.com/nginx/agent/v3/api/grpc/mpi/v1"
+	"github.com/nginx/agent/v3/internal/bus"
+	sloggin "github.com/samber/slog-gin"
 )
 
 var _ bus.Plugin = (*AgentAPIPlugin)(nil)
@@ -25,9 +26,8 @@ type AgentAPIPlugin struct {
 }
 
 func NewAgentAPI() *AgentAPIPlugin {
-
 	return &AgentAPIPlugin{
-		apiAddress: "0.0.0.0:9011",
+		apiAddress: "0.0.0.0:9095",
 		healths:    []*mpi.InstanceHealth{},
 	}
 }
@@ -53,8 +53,6 @@ func (a *AgentAPIPlugin) Info() *bus.Info {
 
 func (a *AgentAPIPlugin) Process(ctx context.Context, msg *bus.Message) {
 	switch msg.Topic {
-	case bus.ConnectionCreatedTopic:
-		slog.InfoContext(ctx, "Received connection created event")
 	case bus.InstanceHealthTopic:
 		a.test = append(a.test, "hello")
 		slog.InfoContext(ctx, "Received instance health event")
@@ -75,7 +73,6 @@ func (a *AgentAPIPlugin) handleInstanceHealthTopic(ctx context.Context, msg *bus
 func (a *AgentAPIPlugin) Subscriptions() []string {
 	return []string{
 		bus.InstanceHealthTopic,
-		bus.ConnectionCreatedTopic,
 	}
 }
 
