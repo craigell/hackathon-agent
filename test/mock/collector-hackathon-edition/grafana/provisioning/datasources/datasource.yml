@@ -16,4 +16,4 @@ datasources:
     type: yesoreyeram-infinity-datasource
     jsonData:
       customHealthCheckEnabled: true
-      customHealthCheckUrl: 'http://agent-with-nginx-plus:9094/health'
+      customHealthCheckUrl: 'http://agent-with-nginx-plus:9095/health'

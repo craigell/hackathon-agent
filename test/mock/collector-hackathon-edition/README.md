@@ -30,12 +30,10 @@ To view the metrics & logs, the grafana UI can be used by accessing this URL htt
 To view the status of the agent & instance exec into the  mock-collector-agent-with-nginx-plus docker container
 
 ```
-> curl http://0.0.0.0:9094/health
+> curl http://0.0.0.0:9095/health
 ```
 
 To stop everything run the following
 ```
 > make stop-mock-management-otel-collector-hackathon-edition
 ```
-
-
