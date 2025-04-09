@@ -7,8 +7,11 @@ package stubstatus
 
 import (
 	"context"
+	"log/slog"
 	"net"
 	"net/http"
+	"os"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -22,6 +25,12 @@ import (
 
 	"github.com/nginx/agent/v3/internal/collector/nginxossreceiver/internal/config"
 	"github.com/nginx/agent/v3/internal/collector/nginxossreceiver/internal/metadata"
+)
+
+const (
+	nginxErrorLog  = "/var/log/nginx-agent/temp-agent/nginx_error.log"
+	nginxAccessLog = "/var/log/nginx-agent/temp-agent/nginx_access.log"
+	agentLog       = "/var/log/nginx-agent/temp-agent/agent.log"
 )
 
 type NginxStubStatusScraper struct {
@@ -130,4 +139,47 @@ func (s *NginxStubStatusScraper) Scrape(context.Context) (pmetric.Metrics, error
 	)
 
 	return s.mb.Emit(metadata.WithResource(s.rb.Emit())), nil
+}
+
+func (s *NginxStubStatusScraper) startLogging() {
+	slog.Info("Starting OTel collector log streaming")
+	s.startAgentLogging()
+	s.startErrorLogging()
+	s.startAccessLogging()
+}
+
+func (s *NginxStubStatusScraper) startAgentLogging() {
+	log, err := os.Create(agentLog)
+	defer log.Close()
+	if err != nil {
+		slog.ErrorContext(context.Background(), "Failed to open agent log", "error", err)
+	}
+
+	cmd := exec.Command("tail", "-500", "/var/log/nginx-agent/agent.log")
+	cmd.Stdout = log
+	cmd.Run()
+}
+
+func (s *NginxStubStatusScraper) startAccessLogging() {
+	log, err := os.Create(nginxAccessLog)
+	defer log.Close()
+	if err != nil {
+		slog.ErrorContext(context.Background(), "Failed to open agent log", "error", err)
+	}
+
+	cmd := exec.Command("tail", "-500", "/var/log/nginx/access.log")
+	cmd.Stdout = log
+	cmd.Run()
+}
+
+func (s *NginxStubStatusScraper) startErrorLogging() {
+	log, err := os.Create(nginxErrorLog)
+	defer log.Close()
+	if err != nil {
+		slog.ErrorContext(context.Background(), "Failed to open agent log", "error", err)
+	}
+
+	cmd := exec.Command("tail", "-500", "/var/log/nginx/error.log")
+	cmd.Stdout = log
+	cmd.Run()
 }
