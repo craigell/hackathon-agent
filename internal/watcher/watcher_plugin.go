@@ -48,6 +48,7 @@ type (
 		instancesWithConfigApplyInProgress []string
 		watcherMutex                       sync.Mutex
 		agentMutex                         sync.Mutex
+		instanceStatus                     mpi.InstanceHealth_InstanceHealthStatus
 	}
 
 	instanceWatcherServiceInterface interface {
@@ -86,6 +87,7 @@ func NewWatcher(agentConfig *config.Config) *Watcher {
 		instancesWithConfigApplyInProgress: []string{},
 		watcherMutex:                       sync.Mutex{},
 		agentMutex:                         sync.Mutex{},
+		instanceStatus:                     mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_UNSPECIFIED,
 	}
 }
 
@@ -310,6 +312,7 @@ func (w *Watcher) monitorWatchers(ctx context.Context) {
 			w.messagePipe.Process(newCtx, &bus.Message{
 				Topic: bus.InstanceHealthTopic, Data: message.InstanceHealth,
 			})
+			w.findInstanceHealth(ctx, message.InstanceHealth)
 		case message := <-w.fileUpdatesChannel:
 			newCtx := context.WithValue(ctx, logger.CorrelationIDContextKey, message.CorrelationID)
 			// Running this in a separate go routine otherwise we get into a deadlock
@@ -317,6 +320,25 @@ func (w *Watcher) monitorWatchers(ctx context.Context) {
 			go w.instanceWatcherService.ReparseConfigs(newCtx)
 		}
 	}
+}
+
+func (w *Watcher) findInstanceHealth(ctx context.Context, instance []*mpi.InstanceHealth) {
+	slog.Info("Checking state of nginx")
+	for _, health := range instance {
+		if health.GetInstanceType() == mpi.InstanceType_INSTANCE_TYPE_NGINX_PLUS {
+			if w.instanceStatus == mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_HEALTHY &&
+				(health.GetInstanceHealthStatus() == mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_UNHEALTHY ||
+					health.GetInstanceHealthStatus() == mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_UNHEALTHY) {
+				slog.Info("NGINX has gone into a bad state")
+				w.messagePipe.Process(
+					ctx,
+					&bus.Message{Topic: bus.BadInstanceHealthTopic},
+				)
+			}
+			w.instanceStatus = health.GetInstanceHealthStatus()
+		}
+	}
+
 }
 
 func (w *Watcher) handleInstanceUpdates(newCtx context.Context, message instance.InstanceUpdatesMessage) {

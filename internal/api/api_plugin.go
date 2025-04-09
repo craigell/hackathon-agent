@@ -2,16 +2,16 @@ package api
 
 import (
 	"context"
+	"github.com/gin-gonic/gin"
+	mpi "github.com/nginx/agent/v3/api/grpc/mpi/v1"
+	"github.com/nginx/agent/v3/internal/bus"
+	sloggin "github.com/samber/slog-gin"
 	"log/slog"
 	"net"
 	"net/http"
 	"os"
 	"sync"
-
-	"github.com/gin-gonic/gin"
-	mpi "github.com/nginx/agent/v3/api/grpc/mpi/v1"
-	"github.com/nginx/agent/v3/internal/bus"
-	sloggin "github.com/samber/slog-gin"
+	"time"
 )
 
 var _ bus.Plugin = (*AgentAPIPlugin)(nil)
@@ -22,7 +22,11 @@ type AgentAPIPlugin struct {
 	messagePipe bus.MessagePipeInterface
 	mutex       sync.Mutex
 	healths     []*mpi.InstanceHealth
-	test        []string
+}
+
+type responseHealth struct {
+	Healths []*mpi.InstanceHealth `json:"healths"`
+	Time    time.Time             `json:"time"`
 }
 
 func NewAgentAPI() *AgentAPIPlugin {
@@ -54,7 +58,6 @@ func (a *AgentAPIPlugin) Info() *bus.Info {
 func (a *AgentAPIPlugin) Process(ctx context.Context, msg *bus.Message) {
 	switch msg.Topic {
 	case bus.InstanceHealthTopic:
-		a.test = append(a.test, "hello")
 		slog.InfoContext(ctx, "Received instance health event")
 		a.handleInstanceHealthTopic(ctx, msg)
 		slog.InfoContext(ctx, "Handled instance health event", "", a.healths)
@@ -68,6 +71,7 @@ func (a *AgentAPIPlugin) handleInstanceHealthTopic(ctx context.Context, msg *bus
 		}
 	}
 	slog.InfoContext(ctx, "Received health topic message", "health", a.healths)
+
 }
 
 func (a *AgentAPIPlugin) Subscriptions() []string {
@@ -79,7 +83,6 @@ func (a *AgentAPIPlugin) Subscriptions() []string {
 func (a *AgentAPIPlugin) Start() {
 	a.server = gin.New()
 	listener, err := net.Listen("tcp", a.apiAddress)
-	slog.Info("Error starting API server", "error", err)
 	a.server.Use(gin.Recovery())
 	a.server.UseRawPath = true
 
@@ -108,7 +111,11 @@ func (a *AgentAPIPlugin) addAgentHealthEndpoint() {
 			c.JSON(http.StatusNotFound, nil)
 		} else {
 			a.mutex.Lock()
-			c.JSON(http.StatusOK, a.healths)
+			resp := &responseHealth{
+				Healths: a.healths,
+				Time:    time.Now(),
+			}
+			c.JSON(http.StatusOK, resp)
 			a.mutex.Unlock()
 		}
 	})
