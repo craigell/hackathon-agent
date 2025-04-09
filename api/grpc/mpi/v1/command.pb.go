@@ -31,6 +31,70 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type InstanceType int32
+
+const (
+	// Unspecified instance type
+	InstanceType_INSTANCE_TYPE_UNSPECIFIED InstanceType = 0
+	// NGINX Agent
+	InstanceType_INSTANCE_TYPE_AGENT InstanceType = 1
+	// NGINX
+	InstanceType_INSTANCE_TYPE_NGINX InstanceType = 2
+	// NGINX Plus
+	InstanceType_INSTANCE_TYPE_NGINX_PLUS InstanceType = 3
+	// NGINX Unit
+	InstanceType_INSTANCE_TYPE_UNIT InstanceType = 4
+	// NGINX App Protect
+	InstanceType_INSTANCE_TYPE_NGINX_APP_PROTECT InstanceType = 5
+)
+
+// Enum value maps for InstanceType.
+var (
+	InstanceType_name = map[int32]string{
+		0: "INSTANCE_TYPE_UNSPECIFIED",
+		1: "INSTANCE_TYPE_AGENT",
+		2: "INSTANCE_TYPE_NGINX",
+		3: "INSTANCE_TYPE_NGINX_PLUS",
+		4: "INSTANCE_TYPE_UNIT",
+		5: "INSTANCE_TYPE_NGINX_APP_PROTECT",
+	}
+	InstanceType_value = map[string]int32{
+		"INSTANCE_TYPE_UNSPECIFIED":       0,
+		"INSTANCE_TYPE_AGENT":             1,
+		"INSTANCE_TYPE_NGINX":             2,
+		"INSTANCE_TYPE_NGINX_PLUS":        3,
+		"INSTANCE_TYPE_UNIT":              4,
+		"INSTANCE_TYPE_NGINX_APP_PROTECT": 5,
+	}
+)
+
+func (x InstanceType) Enum() *InstanceType {
+	p := new(InstanceType)
+	*p = x
+	return p
+}
+
+func (x InstanceType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (InstanceType) Descriptor() protoreflect.EnumDescriptor {
+	return file_mpi_v1_command_proto_enumTypes[0].Descriptor()
+}
+
+func (InstanceType) Type() protoreflect.EnumType {
+	return &file_mpi_v1_command_proto_enumTypes[0]
+}
+
+func (x InstanceType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use InstanceType.Descriptor instead.
+func (InstanceType) EnumDescriptor() ([]byte, []int) {
+	return file_mpi_v1_command_proto_rawDescGZIP(), []int{0}
+}
+
 // Health status enum
 type InstanceHealth_InstanceHealthStatus int32
 
@@ -72,11 +136,11 @@ func (x InstanceHealth_InstanceHealthStatus) String() string {
 }
 
 func (InstanceHealth_InstanceHealthStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_mpi_v1_command_proto_enumTypes[0].Descriptor()
+	return file_mpi_v1_command_proto_enumTypes[1].Descriptor()
 }
 
 func (InstanceHealth_InstanceHealthStatus) Type() protoreflect.EnumType {
-	return &file_mpi_v1_command_proto_enumTypes[0]
+	return &file_mpi_v1_command_proto_enumTypes[1]
 }
 
 func (x InstanceHealth_InstanceHealthStatus) Number() protoreflect.EnumNumber {
@@ -86,71 +150,6 @@ func (x InstanceHealth_InstanceHealthStatus) Number() protoreflect.EnumNumber {
 // Deprecated: Use InstanceHealth_InstanceHealthStatus.Descriptor instead.
 func (InstanceHealth_InstanceHealthStatus) EnumDescriptor() ([]byte, []int) {
 	return file_mpi_v1_command_proto_rawDescGZIP(), []int{8, 0}
-}
-
-// the types of instances possible
-type InstanceMeta_InstanceType int32
-
-const (
-	// Unspecified instance type
-	InstanceMeta_INSTANCE_TYPE_UNSPECIFIED InstanceMeta_InstanceType = 0
-	// NGINX Agent
-	InstanceMeta_INSTANCE_TYPE_AGENT InstanceMeta_InstanceType = 1
-	// NGINX
-	InstanceMeta_INSTANCE_TYPE_NGINX InstanceMeta_InstanceType = 2
-	// NGINX Plus
-	InstanceMeta_INSTANCE_TYPE_NGINX_PLUS InstanceMeta_InstanceType = 3
-	// NGINX Unit
-	InstanceMeta_INSTANCE_TYPE_UNIT InstanceMeta_InstanceType = 4
-	// NGINX App Protect
-	InstanceMeta_INSTANCE_TYPE_NGINX_APP_PROTECT InstanceMeta_InstanceType = 5
-)
-
-// Enum value maps for InstanceMeta_InstanceType.
-var (
-	InstanceMeta_InstanceType_name = map[int32]string{
-		0: "INSTANCE_TYPE_UNSPECIFIED",
-		1: "INSTANCE_TYPE_AGENT",
-		2: "INSTANCE_TYPE_NGINX",
-		3: "INSTANCE_TYPE_NGINX_PLUS",
-		4: "INSTANCE_TYPE_UNIT",
-		5: "INSTANCE_TYPE_NGINX_APP_PROTECT",
-	}
-	InstanceMeta_InstanceType_value = map[string]int32{
-		"INSTANCE_TYPE_UNSPECIFIED":       0,
-		"INSTANCE_TYPE_AGENT":             1,
-		"INSTANCE_TYPE_NGINX":             2,
-		"INSTANCE_TYPE_NGINX_PLUS":        3,
-		"INSTANCE_TYPE_UNIT":              4,
-		"INSTANCE_TYPE_NGINX_APP_PROTECT": 5,
-	}
-)
-
-func (x InstanceMeta_InstanceType) Enum() *InstanceMeta_InstanceType {
-	p := new(InstanceMeta_InstanceType)
-	*p = x
-	return p
-}
-
-func (x InstanceMeta_InstanceType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (InstanceMeta_InstanceType) Descriptor() protoreflect.EnumDescriptor {
-	return file_mpi_v1_command_proto_enumTypes[1].Descriptor()
-}
-
-func (InstanceMeta_InstanceType) Type() protoreflect.EnumType {
-	return &file_mpi_v1_command_proto_enumTypes[1]
-}
-
-func (x InstanceMeta_InstanceType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use InstanceMeta_InstanceType.Descriptor instead.
-func (InstanceMeta_InstanceType) EnumDescriptor() ([]byte, []int) {
-	return file_mpi_v1_command_proto_rawDescGZIP(), []int{26, 0}
 }
 
 // The connection request is an initial handshake to establish a connection, sending NGINX Agent instance information
@@ -676,7 +675,8 @@ type InstanceHealth struct {
 	// Health status
 	InstanceHealthStatus InstanceHealth_InstanceHealthStatus `protobuf:"varint,2,opt,name=instance_health_status,json=instanceHealthStatus,proto3,enum=mpi.v1.InstanceHealth_InstanceHealthStatus" json:"instance_health_status,omitempty"`
 	// Provides a human readable context around why a health status is a particular state
-	Description   string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Description   string       `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	InstanceType  InstanceType `protobuf:"varint,4,opt,name=instance_type,json=instanceType,proto3,enum=mpi.v1.InstanceType" json:"instance_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -730,6 +730,13 @@ func (x *InstanceHealth) GetDescription() string {
 		return x.Description
 	}
 	return ""
+}
+
+func (x *InstanceHealth) GetInstanceType() InstanceType {
+	if x != nil {
+		return x.InstanceType
+	}
+	return InstanceType_INSTANCE_TYPE_UNSPECIFIED
 }
 
 // Health report of a set of instances
@@ -1763,9 +1770,9 @@ func (x *Instance) GetInstanceRuntime() *InstanceRuntime {
 type InstanceMeta struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// the identifier associated with the instance
-	InstanceId string `protobuf:"bytes,1,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
+	InstanceId string `protobuf:"bytes,1,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"` // the types of instances possible
 	// the types of instances possible
-	InstanceType InstanceMeta_InstanceType `protobuf:"varint,2,opt,name=instance_type,json=instanceType,proto3,enum=mpi.v1.InstanceMeta_InstanceType" json:"instance_type,omitempty"`
+	InstanceType InstanceType `protobuf:"varint,2,opt,name=instance_type,json=instanceType,proto3,enum=mpi.v1.InstanceType" json:"instance_type,omitempty"`
 	// the version of the instance
 	Version       string `protobuf:"bytes,3,opt,name=version,proto3" json:"version,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1809,11 +1816,11 @@ func (x *InstanceMeta) GetInstanceId() string {
 	return ""
 }
 
-func (x *InstanceMeta) GetInstanceType() InstanceMeta_InstanceType {
+func (x *InstanceMeta) GetInstanceType() InstanceType {
 	if x != nil {
 		return x.InstanceType
 	}
-	return InstanceMeta_INSTANCE_TYPE_UNSPECIFIED
+	return InstanceType_INSTANCE_TYPE_UNSPECIFIED
 }
 
 func (x *InstanceMeta) GetVersion() string {
@@ -2677,12 +2684,13 @@ const file_mpi_v1_command_proto_rawDesc = "" +
 	"\x1cUpdateDataPlaneStatusRequest\x126\n" +
 	"\fmessage_meta\x18\x01 \x01(\v2\x13.mpi.v1.MessageMetaR\vmessageMeta\x12,\n" +
 	"\bresource\x18\x02 \x01(\v2\x10.mpi.v1.ResourceR\bresource\"\x1f\n" +
-	"\x1dUpdateDataPlaneStatusResponse\"\xf0\x02\n" +
+	"\x1dUpdateDataPlaneStatusResponse\"\xab\x03\n" +
 	"\x0eInstanceHealth\x12)\n" +
 	"\vinstance_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"instanceId\x12a\n" +
 	"\x16instance_health_status\x18\x02 \x01(\x0e2+.mpi.v1.InstanceHealth.InstanceHealthStatusR\x14instanceHealthStatus\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\"\xad\x01\n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x129\n" +
+	"\rinstance_type\x18\x04 \x01(\x0e2\x14.mpi.v1.InstanceTypeR\finstanceType\"\xad\x01\n" +
 	"\x14InstanceHealthStatus\x12&\n" +
 	"\"INSTANCE_HEALTH_STATUS_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eINSTANCE_HEALTH_STATUS_HEALTHY\x10\x01\x12$\n" +
@@ -2738,19 +2746,12 @@ const file_mpi_v1_command_proto_rawDesc = "" +
 	"\bInstance\x129\n" +
 	"\rinstance_meta\x18\x01 \x01(\v2\x14.mpi.v1.InstanceMetaR\finstanceMeta\x12?\n" +
 	"\x0finstance_config\x18\x02 \x01(\v2\x16.mpi.v1.InstanceConfigR\x0einstanceConfig\x12B\n" +
-	"\x10instance_runtime\x18\x03 \x01(\v2\x17.mpi.v1.InstanceRuntimeR\x0finstanceRuntime\"\xd8\x02\n" +
+	"\x10instance_runtime\x18\x03 \x01(\v2\x17.mpi.v1.InstanceRuntimeR\x0finstanceRuntime\"\x8e\x01\n" +
 	"\fInstanceMeta\x12)\n" +
 	"\vinstance_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
-	"instanceId\x12F\n" +
-	"\rinstance_type\x18\x02 \x01(\x0e2!.mpi.v1.InstanceMeta.InstanceTypeR\finstanceType\x12\x18\n" +
-	"\aversion\x18\x03 \x01(\tR\aversion\"\xba\x01\n" +
-	"\fInstanceType\x12\x1d\n" +
-	"\x19INSTANCE_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
-	"\x13INSTANCE_TYPE_AGENT\x10\x01\x12\x17\n" +
-	"\x13INSTANCE_TYPE_NGINX\x10\x02\x12\x1c\n" +
-	"\x18INSTANCE_TYPE_NGINX_PLUS\x10\x03\x12\x16\n" +
-	"\x12INSTANCE_TYPE_UNIT\x10\x04\x12#\n" +
-	"\x1fINSTANCE_TYPE_NGINX_APP_PROTECT\x10\x05\"\x86\x01\n" +
+	"instanceId\x129\n" +
+	"\rinstance_type\x18\x02 \x01(\x0e2\x14.mpi.v1.InstanceTypeR\finstanceType\x12\x18\n" +
+	"\aversion\x18\x03 \x01(\tR\aversion\"\x86\x01\n" +
 	"\x0eInstanceConfig\x120\n" +
 	"\aactions\x18\x01 \x03(\v2\x16.mpi.v1.InstanceActionR\aactions\x128\n" +
 	"\fagent_config\x18\x02 \x01(\v2\x13.mpi.v1.AgentConfigH\x00R\vagentConfigB\b\n" +
@@ -2812,7 +2813,14 @@ const file_mpi_v1_command_proto_rawDesc = "" +
 	"\x03tls\x18\x03 \x01(\v2\x13.mpi.v1.TLSSettingsR\x03tls\"\x0f\n" +
 	"\rMetricsServer\"\f\n" +
 	"\n" +
-	"FileServer2\x87\x03\n" +
+	"FileServer*\xba\x01\n" +
+	"\fInstanceType\x12\x1d\n" +
+	"\x19INSTANCE_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
+	"\x13INSTANCE_TYPE_AGENT\x10\x01\x12\x17\n" +
+	"\x13INSTANCE_TYPE_NGINX\x10\x02\x12\x1c\n" +
+	"\x18INSTANCE_TYPE_NGINX_PLUS\x10\x03\x12\x16\n" +
+	"\x12INSTANCE_TYPE_UNIT\x10\x04\x12#\n" +
+	"\x1fINSTANCE_TYPE_NGINX_APP_PROTECT\x10\x052\x87\x03\n" +
 	"\x0eCommandService\x12W\n" +
 	"\x10CreateConnection\x12\x1f.mpi.v1.CreateConnectionRequest\x1a .mpi.v1.CreateConnectionResponse\"\x00\x12f\n" +
 	"\x15UpdateDataPlaneStatus\x12$.mpi.v1.UpdateDataPlaneStatusRequest\x1a%.mpi.v1.UpdateDataPlaneStatusResponse\"\x00\x12f\n" +
@@ -2834,8 +2842,8 @@ func file_mpi_v1_command_proto_rawDescGZIP() []byte {
 var file_mpi_v1_command_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_mpi_v1_command_proto_msgTypes = make([]protoimpl.MessageInfo, 39)
 var file_mpi_v1_command_proto_goTypes = []any{
-	(InstanceHealth_InstanceHealthStatus)(0), // 0: mpi.v1.InstanceHealth.InstanceHealthStatus
-	(InstanceMeta_InstanceType)(0),           // 1: mpi.v1.InstanceMeta.InstanceType
+	(InstanceType)(0),                        // 0: mpi.v1.InstanceType
+	(InstanceHealth_InstanceHealthStatus)(0), // 1: mpi.v1.InstanceHealth.InstanceHealthStatus
 	(*CreateConnectionRequest)(nil),          // 2: mpi.v1.CreateConnectionRequest
 	(*Resource)(nil),                         // 3: mpi.v1.Resource
 	(*HostInfo)(nil),                         // 4: mpi.v1.HostInfo
@@ -2895,61 +2903,62 @@ var file_mpi_v1_command_proto_depIdxs = []int32{
 	37, // 8: mpi.v1.CreateConnectionResponse.agent_config:type_name -> mpi.v1.AgentConfig
 	41, // 9: mpi.v1.UpdateDataPlaneStatusRequest.message_meta:type_name -> mpi.v1.MessageMeta
 	3,  // 10: mpi.v1.UpdateDataPlaneStatusRequest.resource:type_name -> mpi.v1.Resource
-	0,  // 11: mpi.v1.InstanceHealth.instance_health_status:type_name -> mpi.v1.InstanceHealth.InstanceHealthStatus
-	41, // 12: mpi.v1.UpdateDataPlaneHealthRequest.message_meta:type_name -> mpi.v1.MessageMeta
-	10, // 13: mpi.v1.UpdateDataPlaneHealthRequest.instance_healths:type_name -> mpi.v1.InstanceHealth
-	41, // 14: mpi.v1.DataPlaneResponse.message_meta:type_name -> mpi.v1.MessageMeta
-	42, // 15: mpi.v1.DataPlaneResponse.command_response:type_name -> mpi.v1.CommandResponse
-	41, // 16: mpi.v1.ManagementPlaneRequest.message_meta:type_name -> mpi.v1.MessageMeta
-	15, // 17: mpi.v1.ManagementPlaneRequest.status_request:type_name -> mpi.v1.StatusRequest
-	16, // 18: mpi.v1.ManagementPlaneRequest.health_request:type_name -> mpi.v1.HealthRequest
-	17, // 19: mpi.v1.ManagementPlaneRequest.config_apply_request:type_name -> mpi.v1.ConfigApplyRequest
-	18, // 20: mpi.v1.ManagementPlaneRequest.config_upload_request:type_name -> mpi.v1.ConfigUploadRequest
-	19, // 21: mpi.v1.ManagementPlaneRequest.action_request:type_name -> mpi.v1.APIActionRequest
-	26, // 22: mpi.v1.ManagementPlaneRequest.command_status_request:type_name -> mpi.v1.CommandStatusRequest
-	43, // 23: mpi.v1.ConfigApplyRequest.overview:type_name -> mpi.v1.FileOverview
-	43, // 24: mpi.v1.ConfigUploadRequest.overview:type_name -> mpi.v1.FileOverview
-	20, // 25: mpi.v1.APIActionRequest.nginx_plus_action:type_name -> mpi.v1.NGINXPlusAction
-	21, // 26: mpi.v1.NGINXPlusAction.update_http_upstream_servers:type_name -> mpi.v1.UpdateHTTPUpstreamServers
-	22, // 27: mpi.v1.NGINXPlusAction.get_http_upstream_servers:type_name -> mpi.v1.GetHTTPUpstreamServers
-	23, // 28: mpi.v1.NGINXPlusAction.update_stream_servers:type_name -> mpi.v1.UpdateStreamServers
-	24, // 29: mpi.v1.NGINXPlusAction.get_upstreams:type_name -> mpi.v1.GetUpstreams
-	25, // 30: mpi.v1.NGINXPlusAction.get_stream_upstreams:type_name -> mpi.v1.GetStreamUpstreams
-	44, // 31: mpi.v1.UpdateHTTPUpstreamServers.servers:type_name -> google.protobuf.Struct
-	44, // 32: mpi.v1.UpdateStreamServers.servers:type_name -> google.protobuf.Struct
-	28, // 33: mpi.v1.Instance.instance_meta:type_name -> mpi.v1.InstanceMeta
-	29, // 34: mpi.v1.Instance.instance_config:type_name -> mpi.v1.InstanceConfig
-	30, // 35: mpi.v1.Instance.instance_runtime:type_name -> mpi.v1.InstanceRuntime
-	1,  // 36: mpi.v1.InstanceMeta.instance_type:type_name -> mpi.v1.InstanceMeta.InstanceType
-	36, // 37: mpi.v1.InstanceConfig.actions:type_name -> mpi.v1.InstanceAction
-	37, // 38: mpi.v1.InstanceConfig.agent_config:type_name -> mpi.v1.AgentConfig
-	32, // 39: mpi.v1.InstanceRuntime.nginx_runtime_info:type_name -> mpi.v1.NGINXRuntimeInfo
-	33, // 40: mpi.v1.InstanceRuntime.nginx_plus_runtime_info:type_name -> mpi.v1.NGINXPlusRuntimeInfo
-	35, // 41: mpi.v1.InstanceRuntime.nginx_app_protect_runtime_info:type_name -> mpi.v1.NGINXAppProtectRuntimeInfo
-	31, // 42: mpi.v1.InstanceRuntime.instance_children:type_name -> mpi.v1.InstanceChild
-	34, // 43: mpi.v1.NGINXRuntimeInfo.stub_status:type_name -> mpi.v1.APIDetails
-	34, // 44: mpi.v1.NGINXPlusRuntimeInfo.stub_status:type_name -> mpi.v1.APIDetails
-	34, // 45: mpi.v1.NGINXPlusRuntimeInfo.plus_api:type_name -> mpi.v1.APIDetails
-	38, // 46: mpi.v1.AgentConfig.command:type_name -> mpi.v1.CommandServer
-	39, // 47: mpi.v1.AgentConfig.metrics:type_name -> mpi.v1.MetricsServer
-	40, // 48: mpi.v1.AgentConfig.file:type_name -> mpi.v1.FileServer
-	44, // 49: mpi.v1.AgentConfig.labels:type_name -> google.protobuf.Struct
-	45, // 50: mpi.v1.CommandServer.server:type_name -> mpi.v1.ServerSettings
-	46, // 51: mpi.v1.CommandServer.auth:type_name -> mpi.v1.AuthSettings
-	47, // 52: mpi.v1.CommandServer.tls:type_name -> mpi.v1.TLSSettings
-	2,  // 53: mpi.v1.CommandService.CreateConnection:input_type -> mpi.v1.CreateConnectionRequest
-	8,  // 54: mpi.v1.CommandService.UpdateDataPlaneStatus:input_type -> mpi.v1.UpdateDataPlaneStatusRequest
-	11, // 55: mpi.v1.CommandService.UpdateDataPlaneHealth:input_type -> mpi.v1.UpdateDataPlaneHealthRequest
-	13, // 56: mpi.v1.CommandService.Subscribe:input_type -> mpi.v1.DataPlaneResponse
-	7,  // 57: mpi.v1.CommandService.CreateConnection:output_type -> mpi.v1.CreateConnectionResponse
-	9,  // 58: mpi.v1.CommandService.UpdateDataPlaneStatus:output_type -> mpi.v1.UpdateDataPlaneStatusResponse
-	12, // 59: mpi.v1.CommandService.UpdateDataPlaneHealth:output_type -> mpi.v1.UpdateDataPlaneHealthResponse
-	14, // 60: mpi.v1.CommandService.Subscribe:output_type -> mpi.v1.ManagementPlaneRequest
-	57, // [57:61] is the sub-list for method output_type
-	53, // [53:57] is the sub-list for method input_type
-	53, // [53:53] is the sub-list for extension type_name
-	53, // [53:53] is the sub-list for extension extendee
-	0,  // [0:53] is the sub-list for field type_name
+	1,  // 11: mpi.v1.InstanceHealth.instance_health_status:type_name -> mpi.v1.InstanceHealth.InstanceHealthStatus
+	0,  // 12: mpi.v1.InstanceHealth.instance_type:type_name -> mpi.v1.InstanceType
+	41, // 13: mpi.v1.UpdateDataPlaneHealthRequest.message_meta:type_name -> mpi.v1.MessageMeta
+	10, // 14: mpi.v1.UpdateDataPlaneHealthRequest.instance_healths:type_name -> mpi.v1.InstanceHealth
+	41, // 15: mpi.v1.DataPlaneResponse.message_meta:type_name -> mpi.v1.MessageMeta
+	42, // 16: mpi.v1.DataPlaneResponse.command_response:type_name -> mpi.v1.CommandResponse
+	41, // 17: mpi.v1.ManagementPlaneRequest.message_meta:type_name -> mpi.v1.MessageMeta
+	15, // 18: mpi.v1.ManagementPlaneRequest.status_request:type_name -> mpi.v1.StatusRequest
+	16, // 19: mpi.v1.ManagementPlaneRequest.health_request:type_name -> mpi.v1.HealthRequest
+	17, // 20: mpi.v1.ManagementPlaneRequest.config_apply_request:type_name -> mpi.v1.ConfigApplyRequest
+	18, // 21: mpi.v1.ManagementPlaneRequest.config_upload_request:type_name -> mpi.v1.ConfigUploadRequest
+	19, // 22: mpi.v1.ManagementPlaneRequest.action_request:type_name -> mpi.v1.APIActionRequest
+	26, // 23: mpi.v1.ManagementPlaneRequest.command_status_request:type_name -> mpi.v1.CommandStatusRequest
+	43, // 24: mpi.v1.ConfigApplyRequest.overview:type_name -> mpi.v1.FileOverview
+	43, // 25: mpi.v1.ConfigUploadRequest.overview:type_name -> mpi.v1.FileOverview
+	20, // 26: mpi.v1.APIActionRequest.nginx_plus_action:type_name -> mpi.v1.NGINXPlusAction
+	21, // 27: mpi.v1.NGINXPlusAction.update_http_upstream_servers:type_name -> mpi.v1.UpdateHTTPUpstreamServers
+	22, // 28: mpi.v1.NGINXPlusAction.get_http_upstream_servers:type_name -> mpi.v1.GetHTTPUpstreamServers
+	23, // 29: mpi.v1.NGINXPlusAction.update_stream_servers:type_name -> mpi.v1.UpdateStreamServers
+	24, // 30: mpi.v1.NGINXPlusAction.get_upstreams:type_name -> mpi.v1.GetUpstreams
+	25, // 31: mpi.v1.NGINXPlusAction.get_stream_upstreams:type_name -> mpi.v1.GetStreamUpstreams
+	44, // 32: mpi.v1.UpdateHTTPUpstreamServers.servers:type_name -> google.protobuf.Struct
+	44, // 33: mpi.v1.UpdateStreamServers.servers:type_name -> google.protobuf.Struct
+	28, // 34: mpi.v1.Instance.instance_meta:type_name -> mpi.v1.InstanceMeta
+	29, // 35: mpi.v1.Instance.instance_config:type_name -> mpi.v1.InstanceConfig
+	30, // 36: mpi.v1.Instance.instance_runtime:type_name -> mpi.v1.InstanceRuntime
+	0,  // 37: mpi.v1.InstanceMeta.instance_type:type_name -> mpi.v1.InstanceType
+	36, // 38: mpi.v1.InstanceConfig.actions:type_name -> mpi.v1.InstanceAction
+	37, // 39: mpi.v1.InstanceConfig.agent_config:type_name -> mpi.v1.AgentConfig
+	32, // 40: mpi.v1.InstanceRuntime.nginx_runtime_info:type_name -> mpi.v1.NGINXRuntimeInfo
+	33, // 41: mpi.v1.InstanceRuntime.nginx_plus_runtime_info:type_name -> mpi.v1.NGINXPlusRuntimeInfo
+	35, // 42: mpi.v1.InstanceRuntime.nginx_app_protect_runtime_info:type_name -> mpi.v1.NGINXAppProtectRuntimeInfo
+	31, // 43: mpi.v1.InstanceRuntime.instance_children:type_name -> mpi.v1.InstanceChild
+	34, // 44: mpi.v1.NGINXRuntimeInfo.stub_status:type_name -> mpi.v1.APIDetails
+	34, // 45: mpi.v1.NGINXPlusRuntimeInfo.stub_status:type_name -> mpi.v1.APIDetails
+	34, // 46: mpi.v1.NGINXPlusRuntimeInfo.plus_api:type_name -> mpi.v1.APIDetails
+	38, // 47: mpi.v1.AgentConfig.command:type_name -> mpi.v1.CommandServer
+	39, // 48: mpi.v1.AgentConfig.metrics:type_name -> mpi.v1.MetricsServer
+	40, // 49: mpi.v1.AgentConfig.file:type_name -> mpi.v1.FileServer
+	44, // 50: mpi.v1.AgentConfig.labels:type_name -> google.protobuf.Struct
+	45, // 51: mpi.v1.CommandServer.server:type_name -> mpi.v1.ServerSettings
+	46, // 52: mpi.v1.CommandServer.auth:type_name -> mpi.v1.AuthSettings
+	47, // 53: mpi.v1.CommandServer.tls:type_name -> mpi.v1.TLSSettings
+	2,  // 54: mpi.v1.CommandService.CreateConnection:input_type -> mpi.v1.CreateConnectionRequest
+	8,  // 55: mpi.v1.CommandService.UpdateDataPlaneStatus:input_type -> mpi.v1.UpdateDataPlaneStatusRequest
+	11, // 56: mpi.v1.CommandService.UpdateDataPlaneHealth:input_type -> mpi.v1.UpdateDataPlaneHealthRequest
+	13, // 57: mpi.v1.CommandService.Subscribe:input_type -> mpi.v1.DataPlaneResponse
+	7,  // 58: mpi.v1.CommandService.CreateConnection:output_type -> mpi.v1.CreateConnectionResponse
+	9,  // 59: mpi.v1.CommandService.UpdateDataPlaneStatus:output_type -> mpi.v1.UpdateDataPlaneStatusResponse
+	12, // 60: mpi.v1.CommandService.UpdateDataPlaneHealth:output_type -> mpi.v1.UpdateDataPlaneHealthResponse
+	14, // 61: mpi.v1.CommandService.Subscribe:output_type -> mpi.v1.ManagementPlaneRequest
+	58, // [58:62] is the sub-list for method output_type
+	54, // [54:58] is the sub-list for method input_type
+	54, // [54:54] is the sub-list for extension type_name
+	54, // [54:54] is the sub-list for extension extendee
+	0,  // [0:54] is the sub-list for field type_name
 }
 
 func init() { file_mpi_v1_command_proto_init() }

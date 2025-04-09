@@ -193,7 +193,7 @@ func sanitizeExeDeletedPath(exe string) string {
 
 func convertInfoToInstance(nginxInfo Info) *mpi.Instance {
 	var instanceRuntime *mpi.InstanceRuntime
-	nginxType := mpi.InstanceMeta_INSTANCE_TYPE_NGINX
+	nginxType := mpi.InstanceType_INSTANCE_TYPE_NGINX
 	version := nginxInfo.Version
 
 	if !strings.Contains(nginxInfo.Version, "plus") {
@@ -237,7 +237,7 @@ func convertInfoToInstance(nginxInfo Info) *mpi.Instance {
 			},
 		}
 
-		nginxType = mpi.InstanceMeta_INSTANCE_TYPE_NGINX_PLUS
+		nginxType = mpi.InstanceType_INSTANCE_TYPE_NGINX_PLUS
 		version = nginxInfo.Version
 	}
 

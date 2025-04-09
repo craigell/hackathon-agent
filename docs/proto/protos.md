@@ -83,7 +83,7 @@
     - [UpdateStreamServers](#mpi-v1-UpdateStreamServers)
   
     - [InstanceHealth.InstanceHealthStatus](#mpi-v1-InstanceHealth-InstanceHealthStatus)
-    - [InstanceMeta.InstanceType](#mpi-v1-InstanceMeta-InstanceType)
+    - [InstanceType](#mpi-v1-InstanceType)
   
     - [CommandService](#mpi-v1-CommandService)
   
@@ -984,6 +984,7 @@ Instance Configuration options
 | instance_id | [string](#string) |  |  |
 | instance_health_status | [InstanceHealth.InstanceHealthStatus](#mpi-v1-InstanceHealth-InstanceHealthStatus) |  | Health status |
 | description | [string](#string) |  | Provides a human readable context around why a health status is a particular state |
+| instance_type | [InstanceType](#mpi-v1-InstanceType) |  |  |
 
 
 
@@ -998,8 +999,10 @@ Meta-information relating to the reported instance
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| instance_id | [string](#string) |  | the identifier associated with the instance |
-| instance_type | [InstanceMeta.InstanceType](#mpi-v1-InstanceMeta-InstanceType) |  | the types of instances possible |
+| instance_id | [string](#string) |  | the identifier associated with the instance
+
+the types of instances possible |
+| instance_type | [InstanceType](#mpi-v1-InstanceType) |  | the types of instances possible |
 | version | [string](#string) |  | the version of the instance |
 
 
@@ -1281,10 +1284,10 @@ Health status enum
 
 
 
-<a name="mpi-v1-InstanceMeta-InstanceType"></a>
+<a name="mpi-v1-InstanceType"></a>
 
-### InstanceMeta.InstanceType
-the types of instances possible
+### InstanceType
+
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
