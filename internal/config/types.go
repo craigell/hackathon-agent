@@ -181,6 +181,7 @@ type (
 
 	// OTel Collector Receiver configuration.
 	Receivers struct {
+		FileLog            *FileLogReceiver    `yaml:"-" mapstructure:"file_log_receiver"`
 		HostMetrics        *HostMetrics        `yaml:"-" mapstructure:"host_metrics"`
 		OtlpReceivers      []OtlpReceiver      `yaml:"-" mapstructure:"otlp_receivers"`
 		NginxReceivers     []NginxReceiver     `yaml:"-" mapstructure:"nginx_receivers"`
@@ -227,6 +228,11 @@ type (
 	NginxPlusReceiver struct {
 		InstanceID string     `yaml:"-" mapstructure:"instance_id"`
 		PlusAPI    APIDetails `yaml:"-" mapstructure:"api_details"`
+	}
+
+	FileLogReceiver struct {
+		FilePaths []string `yaml:"-" mapstructure:"include"`
+		Stream    string
 	}
 
 	HostMetrics struct {

@@ -113,6 +113,11 @@ func (oc *Collector) Init(ctx context.Context, mp bus.MessagePipeInterface) erro
 		return nil
 	}
 
+	oc.config.Collector.Receivers.FileLog.Stream = "smart"
+	if oc.config.IsFeatureEnabled(pkgConfig.FeatureStreamLogs) {
+		oc.config.Collector.Receivers.FileLog.Stream = "all"
+	}
+
 	err := writeCollectorConfig(oc.config.Collector)
 	if err != nil {
 		return fmt.Errorf("write OTel Collector config: %w", err)

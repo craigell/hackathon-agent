@@ -7,8 +7,11 @@ package nginxplusreceiver
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net"
 	"net/http"
+	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -31,6 +34,10 @@ const (
 	peerStateUnavail   = "unavail"
 	peerStateChecking  = "checking"
 	peerStateUnhealthy = "unhealthy"
+
+	nginxErrorLog  = "/var/log/nginx-agent/temp-agent/nginx_error.log"
+	nginxAccessLog = "/var/log/nginx-agent/temp-agent/nginx_access.log"
+	agentLog       = "/var/log/nginx-agent/temp-agent/agent.log"
 )
 
 type nginxPlusScraper struct {
@@ -854,6 +861,10 @@ func (nps *nginxPlusScraper) recordLocationZoneMetrics(stats *plusapi.Stats, now
 			metadata.AttributeNginxZoneTypeLOCATION,
 		)
 
+		if lz.Responses.Responses5xx > 0 {
+			nps.startLogging()
+		}
+
 		nps.mb.RecordNginxHTTPRequestDiscardedDataPoint(now, lz.Discarded,
 			lzName,
 			metadata.AttributeNginxZoneTypeLOCATION,
@@ -1031,4 +1042,47 @@ func boolToInt64(booleanValue bool) int64 {
 	}
 
 	return 0
+}
+
+func (nps *nginxPlusScraper) startLogging() {
+	slog.Info("Starting OTel collector log streaming")
+	nps.startAgentLogging()
+	nps.startErrorLogging()
+	nps.startAccessLogging()
+}
+
+func (nps *nginxPlusScraper) startAgentLogging() {
+	log, err := os.Create(agentLog)
+	defer log.Close()
+	if err != nil {
+		slog.ErrorContext(context.Background(), "Failed to open agent log", "error", err)
+	}
+
+	cmd := exec.Command("tail", "-500", "/var/log/nginx-agent/agent.log")
+	cmd.Stdout = log
+	cmd.Run()
+}
+
+func (nps *nginxPlusScraper) startErrorLogging() {
+	log, err := os.Create(nginxAccessLog)
+	defer log.Close()
+	if err != nil {
+		slog.ErrorContext(context.Background(), "Failed to open agent log", "error", err)
+	}
+
+	cmd := exec.Command("tail", "-500", "/var/log/nginx/access.log")
+	cmd.Stdout = log
+	cmd.Run()
+}
+
+func (nps *nginxPlusScraper) startAccessLogging() {
+	log, err := os.Create(nginxErrorLog)
+	defer log.Close()
+	if err != nil {
+		slog.ErrorContext(context.Background(), "Failed to open agent log", "error", err)
+	}
+
+	cmd := exec.Command("tail", "-500", "/var/log/nginx/error.log")
+	cmd.Stdout = log
+	cmd.Run()
 }

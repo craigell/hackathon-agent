@@ -1,9 +1,18 @@
 receivers:
+{{- if eq .Receivers.FileLog.Stream "all" }}
   filelog:
     include:
       - /var/log/nginx/access.log 
       - /var/log/nginx/error.log 
       - /var/log/nginx-agent/agent.log
+{{- end }}
+{{- if eq .Receivers.FileLog.Stream "smart" }}
+  filelog:
+    include:
+      - /var/log/nginx-agent/temp-agent/nginx_access.log
+      - /var/log/nginx-agent/temp-agent/nginx_error.log
+      - /var/log/nginx-agent/temp-agent/agent.log
+{{- end }}
 {{- if ne .Receivers.HostMetrics nil }}
   hostmetrics:
     {{- if .Receivers.HostMetrics.CollectionInterval }}
