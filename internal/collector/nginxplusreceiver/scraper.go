@@ -7,11 +7,8 @@ package nginxplusreceiver
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"net"
 	"net/http"
-	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -860,10 +857,6 @@ func (nps *nginxPlusScraper) recordLocationZoneMetrics(stats *plusapi.Stats, now
 			lzName,
 			metadata.AttributeNginxZoneTypeLOCATION,
 		)
-
-		if lz.Responses.Responses5xx > 0 {
-			nps.startLogging()
-		}
 
 		nps.mb.RecordNginxHTTPRequestDiscardedDataPoint(now, lz.Discarded,
 			lzName,
