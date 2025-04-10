@@ -21,7 +21,9 @@ type AgentAPIPlugin struct {
 	server      *gin.Engine
 	messagePipe bus.MessagePipeInterface
 	mutex       sync.Mutex
-	health      []Health
+	allHealth   []Health
+	agentHealth Health
+	nginxHealth Health
 }
 
 type Health struct {
@@ -34,8 +36,10 @@ type Health struct {
 
 func NewAgentAPI() *AgentAPIPlugin {
 	return &AgentAPIPlugin{
-		apiAddress: "0.0.0.0:9095",
-		health:     make([]Health, 0),
+		apiAddress:  "0.0.0.0:9095",
+		allHealth:   make([]Health, 0),
+		agentHealth: Health{},
+		nginxHealth: Health{},
 	}
 }
 
@@ -44,6 +48,7 @@ func (a *AgentAPIPlugin) Init(ctx context.Context, messagePipe bus.MessagePipeIn
 
 	a.messagePipe = messagePipe
 	go a.Start()
+	go a.CheckHealth(ctx)
 	return nil
 }
 
@@ -63,7 +68,7 @@ func (a *AgentAPIPlugin) Process(ctx context.Context, msg *bus.Message) {
 	case bus.InstanceHealthTopic:
 		slog.InfoContext(ctx, "Received instance health event")
 		a.handleInstanceHealthTopic(ctx, msg)
-		slog.InfoContext(ctx, "Handled instance health event", "", a.health)
+		slog.InfoContext(ctx, "Handled instance health event", "", a.allHealth)
 	}
 }
 
@@ -73,7 +78,7 @@ func (a *AgentAPIPlugin) handleInstanceHealthTopic(ctx context.Context, msg *bus
 			a.convertHealth(instances)
 		}
 	}
-	slog.InfoContext(ctx, "Received health topic message", "health", a.health)
+	slog.InfoContext(ctx, "Received health topic message", "health", a.allHealth)
 }
 
 func (a *AgentAPIPlugin) Subscriptions() []string {
@@ -109,23 +114,19 @@ func (a *AgentAPIPlugin) Start() {
 
 func (a *AgentAPIPlugin) addAgentHealthEndpoint() {
 	a.server.GET("/health", func(c *gin.Context) {
-		slog.Info("Health endpoint added", "health", a.health)
-		if a.health == nil {
+		slog.Info("Health endpoint added", "health", a.allHealth)
+		if a.allHealth == nil {
 			c.JSON(http.StatusNotFound, nil)
 		} else {
 
 			a.mutex.Lock()
-			for _, h := range a.health {
-				h.Timestamp = time.Now()
-			}
-			c.JSON(http.StatusOK, a.health)
+			c.JSON(http.StatusOK, a.allHealth)
 			a.mutex.Unlock()
 		}
 	})
 }
 
 func (a *AgentAPIPlugin) convertHealth(instanceHealth []*mpi.InstanceHealth) {
-	a.health = make([]Health, 0)
 	for _, h := range instanceHealth {
 		status := 0
 
@@ -147,6 +148,34 @@ func (a *AgentAPIPlugin) convertHealth(instanceHealth []*mpi.InstanceHealth) {
 			InstanceID:  h.GetInstanceId(),
 			Description: h.GetDescription(),
 		}
-		a.health = append(a.health, newHealth)
+
+		if newHealth.Type == mpi.InstanceType_INSTANCE_TYPE_AGENT.String() {
+			a.agentHealth = newHealth
+		} else if newHealth.Type == mpi.InstanceType_INSTANCE_TYPE_NGINX_PLUS.String() {
+			a.nginxHealth = newHealth
+		}
+	}
+
+}
+
+func (a *AgentAPIPlugin) CheckHealth(ctx context.Context) {
+	connectionTicker := time.NewTicker(10 * time.Second)
+	defer connectionTicker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-connectionTicker.C:
+			if a.agentHealth.InstanceID != "" {
+				a.agentHealth.Timestamp = time.Now()
+				a.allHealth = append(a.allHealth, a.agentHealth)
+			}
+
+			if a.nginxHealth.InstanceID != "" {
+				a.nginxHealth.Timestamp = time.Now()
+				a.allHealth = append(a.allHealth, a.nginxHealth)
+			}
+		}
 	}
 }
