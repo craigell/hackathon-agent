@@ -21,7 +21,6 @@ type AgentAPIPlugin struct {
 	server      *gin.Engine
 	messagePipe bus.MessagePipeInterface
 	mutex       sync.Mutex
-	test        []string
 	health      []Health
 }
 
@@ -62,7 +61,6 @@ func (a *AgentAPIPlugin) Info() *bus.Info {
 func (a *AgentAPIPlugin) Process(ctx context.Context, msg *bus.Message) {
 	switch msg.Topic {
 	case bus.InstanceHealthTopic:
-		a.test = append(a.test, "hello")
 		slog.InfoContext(ctx, "Received instance health event")
 		a.handleInstanceHealthTopic(ctx, msg)
 		slog.InfoContext(ctx, "Handled instance health event", "", a.health)
