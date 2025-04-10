@@ -17,4 +17,5 @@ const (
 	FeatureAgentAPI         = "agent-api"
 	FeatureAPIAction        = "api-action"
 	FeatureLogsNap          = "logs-nap"
+	FeatureStreamLogs       = "stream-logs"
 )

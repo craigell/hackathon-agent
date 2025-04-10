@@ -119,6 +119,7 @@ func ResolveConfig() (*Config, error) {
 	slog.Info("Enabled features", "features", config.Features)
 	slog.Info("Excluded files from being watched for file changes", "exclude_files",
 		config.Watchers.FileWatcher.ExcludeFiles)
+	slog.Info("Features Enabled", "features", config.Features)
 
 	return config, nil
 }
