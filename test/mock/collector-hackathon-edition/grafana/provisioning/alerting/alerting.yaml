@@ -185,7 +185,7 @@ groups:
         for: 1m
         isPaused: false
         notification_settings:
-          receiver: default-email
+          receiver: test
 
 contactPoints:
   - orgId: 1
