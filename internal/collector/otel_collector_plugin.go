@@ -113,6 +113,7 @@ func (oc *Collector) Init(ctx context.Context, mp bus.MessagePipeInterface) erro
 		return nil
 	}
 
+	oc.config.Collector.Receivers.FileLog = &config.FileLogReceiver{}
 	oc.config.Collector.Receivers.FileLog.Stream = "smart"
 	if oc.config.IsFeatureEnabled(pkgConfig.FeatureStreamLogs) {
 		oc.config.Collector.Receivers.FileLog.Stream = "all"
