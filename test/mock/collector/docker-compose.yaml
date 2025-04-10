@@ -74,6 +74,7 @@ services:
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - ./grafana/provisioning/plugins:/etc/grafana/provisioning/plugins
       - ./grafana/provisioning/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/provisioning/dashboards/grafana.ini:/etc/grafana/grafana.ini
     networks:
       - metrics
 
