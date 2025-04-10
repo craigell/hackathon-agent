@@ -325,13 +325,13 @@ func (w *Watcher) monitorWatchers(ctx context.Context) {
 }
 
 func (w *Watcher) findInstanceHealth(ctx context.Context, instance []*mpi.InstanceHealth) {
-	slog.Info("Checking state of nginx")
+	slog.Info("----------------------- Checking state of nginx")
 	for _, health := range instance {
 		if health.GetInstanceType() == mpi.InstanceType_INSTANCE_TYPE_NGINX_PLUS {
 			if (w.instanceStatus == mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_HEALTHY || w.instanceStatus == mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_UNSPECIFIED) &&
 				(health.GetInstanceHealthStatus() == mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_UNHEALTHY ||
-					health.GetInstanceHealthStatus() == mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_UNHEALTHY) {
-				slog.Info("NGINX has gone into a bad state")
+					health.GetInstanceHealthStatus() == mpi.InstanceHealth_INSTANCE_HEALTH_STATUS_DEGRADED) {
+				slog.Info("----------------------- NGINX has gone into a bad state")
 				w.messagePipe.Process(
 					ctx,
 					&bus.Message{Topic: bus.BadInstanceHealthTopic},

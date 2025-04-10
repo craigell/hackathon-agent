@@ -7,8 +7,11 @@ package nginxplusreceiver
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net"
 	"net/http"
+	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -38,12 +41,21 @@ const (
 )
 
 type nginxPlusScraper struct {
-	plusClient *plusapi.NginxClient
-	cfg        *Config
-	mb         *metadata.MetricsBuilder
-	rb         *metadata.ResourceBuilder
-	logger     *zap.Logger
-	settings   receiver.Settings
+	plusClient                  *plusapi.NginxClient
+	cfg                         *Config
+	mb                          *metadata.MetricsBuilder
+	rb                          *metadata.ResourceBuilder
+	logger                      *zap.Logger
+	settings                    receiver.Settings
+	previousServerZoneResponses map[string]ResponseStatuses
+}
+
+type ResponseStatuses struct {
+	oneHundredStatusRange   int64
+	twoHundredStatusRange   int64
+	threeHundredStatusRange int64
+	fourHundredStatusRange  int64
+	fiveHundredStatusRange  int64
 }
 
 func newNginxPlusScraper(
@@ -72,12 +84,13 @@ func newNginxPlusScraper(
 	}
 
 	return &nginxPlusScraper{
-		plusClient: plusClient,
-		settings:   settings,
-		cfg:        cfg,
-		mb:         mb,
-		rb:         rb,
-		logger:     settings.Logger,
+		plusClient:                  plusClient,
+		settings:                    settings,
+		cfg:                         cfg,
+		mb:                          mb,
+		rb:                          rb,
+		logger:                      settings.Logger,
+		previousServerZoneResponses: make(map[string]ResponseStatuses),
 	}, nil
 }
 
@@ -796,6 +809,23 @@ func (nps *nginxPlusScraper) recordServerZoneMetrics(stats *plusapi.Stats, now p
 			metadata.AttributeNginxZoneTypeSERVER,
 		)
 
+		slog.Info("5xx Response ", "value", int64(sz.Responses.Responses5xx))
+		slog.Info("5xx Response ", "value", int64(sz.Responses.Responses5xx)-nps.previousServerZoneResponses[szName].fiveHundredStatusRange)
+		if (int64(sz.Responses.Responses5xx) - nps.previousServerZoneResponses[szName].fiveHundredStatusRange) > 0 {
+			startErrorLogging()
+			startAccessLogging()
+		}
+
+		respStatus := ResponseStatuses{
+			oneHundredStatusRange:   int64(sz.Responses.Responses1xx),
+			twoHundredStatusRange:   int64(sz.Responses.Responses2xx),
+			threeHundredStatusRange: int64(sz.Responses.Responses3xx),
+			fourHundredStatusRange:  int64(sz.Responses.Responses4xx),
+			fiveHundredStatusRange:  int64(sz.Responses.Responses5xx),
+		}
+
+		nps.previousServerZoneResponses[szName] = respStatus
+
 		nps.mb.RecordNginxHTTPRequestDiscardedDataPoint(now, int64(sz.Discarded),
 			szName,
 			metadata.AttributeNginxZoneTypeSERVER,
@@ -1035,4 +1065,40 @@ func boolToInt64(booleanValue bool) int64 {
 	}
 
 	return 0
+}
+
+func startAgentLogging() {
+	log, err := os.Create(agentLog)
+	defer log.Close()
+	if err != nil {
+		slog.ErrorContext(context.Background(), "Failed to open agent log", "error", err)
+	}
+
+	cmd := exec.Command("tail", "-500", "/var/log/nginx-agent/agent.log")
+	cmd.Stdout = log
+	cmd.Run()
+}
+
+func startAccessLogging() {
+	log, err := os.Create(nginxAccessLog)
+	defer log.Close()
+	if err != nil {
+		slog.ErrorContext(context.Background(), "Failed to open agent log", "error", err)
+	}
+
+	cmd := exec.Command("tail", "-500", "/var/log/nginx/access.log")
+	cmd.Stdout = log
+	cmd.Run()
+}
+
+func startErrorLogging() {
+	log, err := os.Create(nginxErrorLog)
+	defer log.Close()
+	if err != nil {
+		slog.ErrorContext(context.Background(), "Failed to open agent log", "error", err)
+	}
+
+	cmd := exec.Command("tail", "-500", "/var/log/nginx/error.log")
+	cmd.Stdout = log
+	cmd.Run()
 }

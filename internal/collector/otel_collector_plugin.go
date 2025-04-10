@@ -285,10 +285,16 @@ func (oc *Collector) Process(ctx context.Context, msg *bus.Message) {
 	case bus.ResourceUpdateTopic:
 		oc.handleResourceUpdate(ctx, msg)
 	case bus.ConnectionLostTopic, bus.ConfigApplyFailedTopic:
-		oc.startAgentLogging()
+		if !oc.config.IsFeatureEnabled(pkgConfig.FeatureStreamLogs) {
+			oc.startAgentLogging()
+		}
+
 	case bus.BadInstanceHealthTopic:
-		oc.startErrorLogging()
-		oc.startAccessLogging()
+		slog.InfoContext(ctx, "OTel collector received bad instance health message")
+		if !oc.config.IsFeatureEnabled(pkgConfig.FeatureStreamLogs) {
+			oc.startErrorLogging()
+			oc.startAccessLogging()
+		}
 	default:
 		slog.DebugContext(ctx, "OTel collector plugin unknown topic", "topic", msg.Topic)
 	}
