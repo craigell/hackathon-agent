@@ -3,5 +3,3 @@ apiVersion: 1
 apps:
   - type: grafana-lokiexplore-app
     org_id: 1
-  - type: yesoreyeram-infinity-datasource
-    org_id: 2
