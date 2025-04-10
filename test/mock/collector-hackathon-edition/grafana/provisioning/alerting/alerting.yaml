@@ -91,7 +91,7 @@ groups:
               conditions:
                 - evaluator:
                     params:
-                      - 50000
+                      - 30
                     type: gt
                   operator:
                     type: and
@@ -116,7 +116,7 @@ groups:
         execErrState: Error
         for: 1m
         annotations:
-          summary: Number of 500 HTTP status codes has exceeded 50,000 in the last 5 minutes
+          summary: Number of 500 HTTP status codes has exceeded 30 in the last 5 minutes
         isPaused: false
         notification_settings:
           receiver: test
