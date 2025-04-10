@@ -23,6 +23,252 @@
     "panels": [
         {
             "datasource": {
+                "type": "yesoreyeram-infinity-datasource",
+                "uid": "PE572D7280A8CD61B"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "fillOpacity": 68,
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "lineWidth": 2
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "blue",
+                                "value": null
+                            },
+                            {
+                                "color": "dark-green",
+                                "value": 1
+                            },
+                            {
+                                "color": "semi-dark-orange",
+                                "value": 2
+                            },
+                            {
+                                "color": "dark-red",
+                                "value": 3
+                            }
+                        ]
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "type"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.hideFrom",
+                                "value": {
+                                    "legend": false,
+                                    "tooltip": false,
+                                    "viz": true
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Agent Status"
+                        },
+                        "properties": [
+                            {
+                                "id": "mappings",
+                                "value": [
+                                    {
+                                        "options": {
+                                            "1": {
+                                                "index": 0,
+                                                "text": "healthy"
+                                            },
+                                            "2": {
+                                                "index": 1,
+                                                "text": "unhealthy"
+                                            },
+                                            "3": {
+                                                "index": 2,
+                                                "text": "degraded"
+                                            }
+                                        },
+                                        "type": "value"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "NGINX Status"
+                        },
+                        "properties": [
+                            {
+                                "id": "mappings",
+                                "value": [
+                                    {
+                                        "options": {
+                                            "1": {
+                                                "index": 0,
+                                                "text": "healthy"
+                                            },
+                                            "2": {
+                                                "index": 1,
+                                                "text": "unhealthy"
+                                            },
+                                            "3": {
+                                                "index": 2,
+                                                "text": "degraded"
+                                            }
+                                        },
+                                        "type": "value"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "id": 6,
+            "links": [
+                {
+                    "title": "NGINX Agent Logs",
+                    "url": "http://localhost:3002/d/beiasbp4mq4n4b/nginx-plus-logs?orgId=1&from=2025-04-10T06:02:37.464Z&to=2025-04-10T12:02:37.464Z&timezone=browser&viewPanel=panel-4"
+                },
+                {
+                    "title": "NGINX Plus Access Logs",
+                    "url": "http://localhost:3002/d/beiasbp4mq4n4b/nginx-plus-logs?orgId=1&from=2025-04-10T06:02:37.464Z&to=2025-04-10T12:02:37.464Z&timezone=browser&viewPanel=panel-6"
+                },
+                {
+                    "title": "NGINX Plus Error Logs",
+                    "url": "http://localhost:3002/d/beiasbp4mq4n4b/nginx-plus-logs?orgId=1&from=2025-04-10T06:02:37.464Z&to=2025-04-10T12:02:37.464Z&timezone=browser&viewPanel=panel-5"
+                }
+            ],
+            "options": {
+                "colWidth": 0.9,
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "rowHeight": 0.8,
+                "showValue": "always",
+                "tooltip": {
+                    "hideZeros": false,
+                    "maxWidth": 1,
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "11.5.2",
+            "targets": [
+                {
+                    "columns": [
+                        {
+                            "selector": "health",
+                            "text": "Agent Status",
+                            "type": "number"
+                        },
+                        {
+                            "selector": "timestamp",
+                            "text": "time",
+                            "timestampFormat": "2006-01-02T15:04:05Z07:00",
+                            "type": "timestamp"
+                        },
+                        {
+                            "selector": "type",
+                            "text": "",
+                            "type": "string"
+                        }
+                    ],
+                    "computed_columns": [],
+                    "datasource": {
+                        "type": "yesoreyeram-infinity-datasource",
+                        "uid": "PE572D7280A8CD61B"
+                    },
+                    "filterExpression": "type==\"INSTANCE_TYPE_AGENT\"",
+                    "filters": [],
+                    "format": "table",
+                    "global_query_id": "",
+                    "hide": false,
+                    "pagination_mode": "none",
+                    "parser": "backend",
+                    "refId": "A",
+                    "root_selector": "",
+                    "source": "url",
+                    "type": "json",
+                    "url": "http://agent-with-nginx-plus:9095/health",
+                    "url_options": {
+                        "data": "",
+                        "method": "GET"
+                    }
+                },
+                {
+                    "columns": [
+                        {
+                            "selector": "health",
+                            "text": "NGINX Status",
+                            "type": "number"
+                        },
+                        {
+                            "selector": "timestamp",
+                            "text": "time",
+                            "timestampFormat": "2006-01-02T15:04:05Z07:00",
+                            "type": "timestamp"
+                        },
+                        {
+                            "selector": "type",
+                            "text": "",
+                            "type": "string"
+                        }
+                    ],
+                    "computed_columns": [],
+                    "datasource": {
+                        "type": "yesoreyeram-infinity-datasource",
+                        "uid": "PE572D7280A8CD61B"
+                    },
+                    "filterExpression": "type==\"INSTANCE_TYPE_NGINX_PLUS\"",
+                    "filters": [],
+                    "format": "table",
+                    "global_query_id": "",
+                    "hide": false,
+                    "pagination_mode": "none",
+                    "parser": "backend",
+                    "refId": "B",
+                    "root_selector": "",
+                    "source": "url",
+                    "type": "json",
+                    "url": "http://agent-with-nginx-plus:9095/health",
+                    "url_options": {
+                        "data": "",
+                        "method": "GET"
+                    }
+                }
+            ],
+            "title": "Agent Health Status",
+            "type": "status-history"
+        },
+        {
+            "datasource": {
                 "default": true,
                 "type": "prometheus",
                 "uid": "otel-prometheus-scraper"
@@ -86,7 +332,7 @@
                 "h": 8,
                 "w": 17,
                 "x": 0,
-                "y": 0
+                "y": 8
             },
             "id": 4,
             "options": {
@@ -157,7 +403,7 @@
                 "h": 8,
                 "w": 7,
                 "x": 17,
-                "y": 0
+                "y": 8
             },
             "id": 2,
             "options": {
@@ -264,7 +510,7 @@
                 "h": 9,
                 "w": 24,
                 "x": 0,
-                "y": 8
+                "y": 16
             },
             "id": 5,
             "options": {
@@ -319,8 +565,7 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green",
-                                "value": null
+                                "color": "green"
                             }
                         ]
                     }
@@ -347,7 +592,7 @@
                 "h": 8,
                 "w": 7,
                 "x": 0,
-                "y": 17
+                "y": 25
             },
             "id": 3,
             "options": {
@@ -447,8 +692,7 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green",
-                                "value": null
+                                "color": "green"
                             },
                             {
                                 "color": "red",
@@ -463,7 +707,7 @@
                 "h": 8,
                 "w": 17,
                 "x": 7,
-                "y": 17
+                "y": 25
             },
             "id": 1,
             "options": {
@@ -517,6 +761,6 @@
     "timezone": "browser",
     "title": "NGINX Plus",
     "uid": "fdris4hclbqiob",
-    "version": 8,
+    "version": 15,
     "weekStart": ""
 }
