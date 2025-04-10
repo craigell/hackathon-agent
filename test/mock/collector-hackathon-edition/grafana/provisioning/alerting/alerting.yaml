@@ -1,0 +1,199 @@
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: hackathon-group
+    folder: hackathon-alerts
+    interval: 1m
+    rules:
+      - uid: deie2gt9sekn4d
+        title: high-cpu-usage
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: otel-prometheus-scraper
+            model:
+              disableTextWrap: false
+              editorMode: builder
+              expr: system_cpu_utilization
+              fullMetaSearch: false
+              includeNullMetadata: true
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+              useBackend: false
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0.5
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        dashboardUid: ""
+        panelId: 0
+        noDataState: NoData
+        execErrState: Error
+        for: 1m
+        annotations:
+          summary: CPU utilization is above 50%
+        isPaused: false
+        notification_settings:
+          receiver: test
+      - uid: aeie5w275hzpcf
+        title: high-500-http-status-rate
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: otel-prometheus-scraper
+            model:
+              disableTextWrap: false
+              editorMode: builder
+              expr: sum by(nginx_status_range) (increase(nginx_http_response_status{nginx_status_range="5xx"}[5m]))
+              format: time_series
+              fullMetaSearch: false
+              includeNullMetadata: false
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+              useBackend: false
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 30
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        dashboardUid: ""
+        panelId: 0
+        noDataState: NoData
+        execErrState: Error
+        for: 1m
+        annotations:
+          summary: Number of 500 HTTP status codes has exceeded 30 in the last 5 minutes
+        isPaused: false
+        notification_settings:
+          receiver: test
+  - orgId: 1
+    name: infinity
+    folder: hackathon-alerts
+    interval: 1m
+    rules:
+      - uid: aeihdottcw4qoe
+        title: agent-degraded
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: PE572D7280A8CD61B
+            model:
+              columns: []
+              datasource:
+                type: yesoreyeram-infinity-datasource
+                uid: PE572D7280A8CD61B
+              filters: []
+              format: table
+              global_query_id: ""
+              hide: false
+              instant: true
+              intervalMs: 1000
+              maxDataPoints: 43200
+              parser: backend
+              refId: A
+              root_selector: ""
+              source: url
+              type: json
+              url: http://agent-with-nginx-plus:9095/health
+              url_options:
+                data: ""
+                method: GET
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 3
+                    type: eq
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        noDataState: NoData
+        execErrState: Error
+        for: 1m
+        isPaused: false
+        notification_settings:
+          receiver: test
+
+contactPoints:
+  - orgId: 1
+    name: test
+    receivers:
+      - uid: deie22pyisni8d
+        type: email
+        settings:
+          addresses: <your_email_here>
+          singleEmail: true
+        disableResolveMessage: false
