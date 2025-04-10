@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"os/exec"
 	"strings"
 	"sync"
 	"time"
@@ -56,6 +57,12 @@ type (
 var (
 	_         bus.Plugin = (*Collector)(nil)
 	initMutex            = &sync.Mutex{}
+)
+
+const (
+	nginxErrorLog  = "/var/log/nginx-agent/temp-agent/nginx_error.log"
+	nginxAccessLog = "/var/log/nginx-agent/temp-agent/nginx_access.log"
+	agentLog       = "/var/log/nginx-agent/temp-agent/agent.log"
 )
 
 // NewCollector is the constructor for the Collector plugin.
@@ -113,6 +120,13 @@ func (oc *Collector) Init(ctx context.Context, mp bus.MessagePipeInterface) erro
 		return nil
 	}
 
+	logErr := oc.CreateLogFiles()
+	if logErr != nil {
+		slog.InfoContext(runCtx, "Error creating log files: %v", logErr)
+	} else {
+
+	}
+
 	oc.config.Collector.Receivers.FileLog = &config.FileLogReceiver{}
 	oc.config.Collector.Receivers.FileLog.Stream = "smart"
 	if oc.config.IsFeatureEnabled(pkgConfig.FeatureStreamLogs) {
@@ -131,6 +145,36 @@ func (oc *Collector) Init(ctx context.Context, mp bus.MessagePipeInterface) erro
 	if !oc.stopped {
 		return errors.New("OTel collector already running")
 	}
+
+	return nil
+}
+
+func (oc *Collector) CreateLogFiles() error {
+	if err := os.MkdirAll("/var/log/nginx-agent/temp-agent/", 0o755); err != nil {
+		slog.Error("Unable to create directory", "err", err)
+		return err
+	}
+
+	errLogFile, err := os.OpenFile(nginxErrorLog, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
+	if err != nil {
+		slog.Error("Failed create log file", "error", err)
+		return err
+	}
+	errLogFile.Close()
+
+	accessLogFile, err := os.OpenFile(nginxAccessLog, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
+	if err != nil {
+		slog.Error("Failed create log file", "error", err)
+		return err
+	}
+	accessLogFile.Close()
+
+	agentLogFile, err := os.OpenFile(agentLog, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o666)
+	if err != nil {
+		slog.Error("Failed create log file", "error", err)
+		return err
+	}
+	agentLogFile.Close()
 
 	return nil
 }
@@ -240,6 +284,11 @@ func (oc *Collector) Process(ctx context.Context, msg *bus.Message) {
 		oc.handleNginxConfigUpdate(ctx, msg)
 	case bus.ResourceUpdateTopic:
 		oc.handleResourceUpdate(ctx, msg)
+	case bus.ConnectionLostTopic, bus.ConfigApplyFailedTopic:
+		oc.startAgentLogging()
+	case bus.BadInstanceHealthTopic:
+		oc.startErrorLogging()
+		oc.startAccessLogging()
 	default:
 		slog.DebugContext(ctx, "OTel collector plugin unknown topic", "topic", msg.Topic)
 	}
@@ -250,7 +299,52 @@ func (oc *Collector) Subscriptions() []string {
 	return []string{
 		bus.ResourceUpdateTopic,
 		bus.NginxConfigUpdateTopic,
+		bus.ConnectionLostTopic,
+		bus.BadInstanceHealthTopic,
 	}
+}
+
+func (oc *Collector) startLogging() {
+	slog.Info("Starting OTel collector log streaming")
+	oc.startAgentLogging()
+	oc.startErrorLogging()
+	oc.startAccessLogging()
+}
+
+func (oc *Collector) startAgentLogging() {
+	log, err := os.Create(agentLog)
+	defer log.Close()
+	if err != nil {
+		slog.ErrorContext(context.Background(), "Failed to open agent log", "error", err)
+	}
+
+	cmd := exec.Command("tail", "-500", "/var/log/nginx-agent/agent.log")
+	cmd.Stdout = log
+	cmd.Run()
+}
+
+func (oc *Collector) startAccessLogging() {
+	log, err := os.Create(nginxAccessLog)
+	defer log.Close()
+	if err != nil {
+		slog.ErrorContext(context.Background(), "Failed to open agent log", "error", err)
+	}
+
+	cmd := exec.Command("tail", "-500", "/var/log/nginx/access.log")
+	cmd.Stdout = log
+	cmd.Run()
+}
+
+func (oc *Collector) startErrorLogging() {
+	log, err := os.Create(nginxErrorLog)
+	defer log.Close()
+	if err != nil {
+		slog.ErrorContext(context.Background(), "Failed to open agent log", "error", err)
+	}
+
+	cmd := exec.Command("tail", "-500", "/var/log/nginx/error.log")
+	cmd.Stdout = log
+	cmd.Run()
 }
 
 func (oc *Collector) handleNginxConfigUpdate(ctx context.Context, msg *bus.Message) {

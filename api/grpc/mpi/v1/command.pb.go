@@ -19,6 +19,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	structpb "google.golang.org/protobuf/types/known/structpb"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -675,8 +676,9 @@ type InstanceHealth struct {
 	// Health status
 	InstanceHealthStatus InstanceHealth_InstanceHealthStatus `protobuf:"varint,2,opt,name=instance_health_status,json=instanceHealthStatus,proto3,enum=mpi.v1.InstanceHealth_InstanceHealthStatus" json:"instance_health_status,omitempty"`
 	// Provides a human readable context around why a health status is a particular state
-	Description   string       `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	InstanceType  InstanceType `protobuf:"varint,4,opt,name=instance_type,json=instanceType,proto3,enum=mpi.v1.InstanceType" json:"instance_type,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	InstanceType  InstanceType           `protobuf:"varint,4,opt,name=instance_type,json=instanceType,proto3,enum=mpi.v1.InstanceType" json:"instance_type,omitempty"`
+	Timestamp     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -737,6 +739,13 @@ func (x *InstanceHealth) GetInstanceType() InstanceType {
 		return x.InstanceType
 	}
 	return InstanceType_INSTANCE_TYPE_UNSPECIFIED
+}
+
+func (x *InstanceHealth) GetTimestamp() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Timestamp
+	}
+	return nil
 }
 
 // Health report of a set of instances
@@ -2652,7 +2661,7 @@ var File_mpi_v1_command_proto protoreflect.FileDescriptor
 
 const file_mpi_v1_command_proto_rawDesc = "" +
 	"\n" +
-	"\x14mpi/v1/command.proto\x12\x06mpi.v1\x1a\x13mpi/v1/common.proto\x1a\x12mpi/v1/files.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1bbuf/validate/validate.proto\"\x7f\n" +
+	"\x14mpi/v1/command.proto\x12\x06mpi.v1\x1a\x13mpi/v1/common.proto\x1a\x12mpi/v1/files.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x7f\n" +
 	"\x17CreateConnectionRequest\x126\n" +
 	"\fmessage_meta\x18\x01 \x01(\v2\x13.mpi.v1.MessageMetaR\vmessageMeta\x12,\n" +
 	"\bresource\x18\x02 \x01(\v2\x10.mpi.v1.ResourceR\bresource\"\xde\x01\n" +
@@ -2684,13 +2693,14 @@ const file_mpi_v1_command_proto_rawDesc = "" +
 	"\x1cUpdateDataPlaneStatusRequest\x126\n" +
 	"\fmessage_meta\x18\x01 \x01(\v2\x13.mpi.v1.MessageMetaR\vmessageMeta\x12,\n" +
 	"\bresource\x18\x02 \x01(\v2\x10.mpi.v1.ResourceR\bresource\"\x1f\n" +
-	"\x1dUpdateDataPlaneStatusResponse\"\xab\x03\n" +
+	"\x1dUpdateDataPlaneStatusResponse\"\xe5\x03\n" +
 	"\x0eInstanceHealth\x12)\n" +
 	"\vinstance_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\n" +
 	"instanceId\x12a\n" +
 	"\x16instance_health_status\x18\x02 \x01(\x0e2+.mpi.v1.InstanceHealth.InstanceHealthStatusR\x14instanceHealthStatus\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x129\n" +
-	"\rinstance_type\x18\x04 \x01(\x0e2\x14.mpi.v1.InstanceTypeR\finstanceType\"\xad\x01\n" +
+	"\rinstance_type\x18\x04 \x01(\x0e2\x14.mpi.v1.InstanceTypeR\finstanceType\x128\n" +
+	"\ttimestamp\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\"\xad\x01\n" +
 	"\x14InstanceHealthStatus\x12&\n" +
 	"\"INSTANCE_HEALTH_STATUS_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eINSTANCE_HEALTH_STATUS_HEALTHY\x10\x01\x12$\n" +
@@ -2885,11 +2895,12 @@ var file_mpi_v1_command_proto_goTypes = []any{
 	(*FileServer)(nil),                       // 40: mpi.v1.FileServer
 	(*MessageMeta)(nil),                      // 41: mpi.v1.MessageMeta
 	(*CommandResponse)(nil),                  // 42: mpi.v1.CommandResponse
-	(*FileOverview)(nil),                     // 43: mpi.v1.FileOverview
-	(*structpb.Struct)(nil),                  // 44: google.protobuf.Struct
-	(*ServerSettings)(nil),                   // 45: mpi.v1.ServerSettings
-	(*AuthSettings)(nil),                     // 46: mpi.v1.AuthSettings
-	(*TLSSettings)(nil),                      // 47: mpi.v1.TLSSettings
+	(*timestamppb.Timestamp)(nil),            // 43: google.protobuf.Timestamp
+	(*FileOverview)(nil),                     // 44: mpi.v1.FileOverview
+	(*structpb.Struct)(nil),                  // 45: google.protobuf.Struct
+	(*ServerSettings)(nil),                   // 46: mpi.v1.ServerSettings
+	(*AuthSettings)(nil),                     // 47: mpi.v1.AuthSettings
+	(*TLSSettings)(nil),                      // 48: mpi.v1.TLSSettings
 }
 var file_mpi_v1_command_proto_depIdxs = []int32{
 	41, // 0: mpi.v1.CreateConnectionRequest.message_meta:type_name -> mpi.v1.MessageMeta
@@ -2905,60 +2916,61 @@ var file_mpi_v1_command_proto_depIdxs = []int32{
 	3,  // 10: mpi.v1.UpdateDataPlaneStatusRequest.resource:type_name -> mpi.v1.Resource
 	1,  // 11: mpi.v1.InstanceHealth.instance_health_status:type_name -> mpi.v1.InstanceHealth.InstanceHealthStatus
 	0,  // 12: mpi.v1.InstanceHealth.instance_type:type_name -> mpi.v1.InstanceType
-	41, // 13: mpi.v1.UpdateDataPlaneHealthRequest.message_meta:type_name -> mpi.v1.MessageMeta
-	10, // 14: mpi.v1.UpdateDataPlaneHealthRequest.instance_healths:type_name -> mpi.v1.InstanceHealth
-	41, // 15: mpi.v1.DataPlaneResponse.message_meta:type_name -> mpi.v1.MessageMeta
-	42, // 16: mpi.v1.DataPlaneResponse.command_response:type_name -> mpi.v1.CommandResponse
-	41, // 17: mpi.v1.ManagementPlaneRequest.message_meta:type_name -> mpi.v1.MessageMeta
-	15, // 18: mpi.v1.ManagementPlaneRequest.status_request:type_name -> mpi.v1.StatusRequest
-	16, // 19: mpi.v1.ManagementPlaneRequest.health_request:type_name -> mpi.v1.HealthRequest
-	17, // 20: mpi.v1.ManagementPlaneRequest.config_apply_request:type_name -> mpi.v1.ConfigApplyRequest
-	18, // 21: mpi.v1.ManagementPlaneRequest.config_upload_request:type_name -> mpi.v1.ConfigUploadRequest
-	19, // 22: mpi.v1.ManagementPlaneRequest.action_request:type_name -> mpi.v1.APIActionRequest
-	26, // 23: mpi.v1.ManagementPlaneRequest.command_status_request:type_name -> mpi.v1.CommandStatusRequest
-	43, // 24: mpi.v1.ConfigApplyRequest.overview:type_name -> mpi.v1.FileOverview
-	43, // 25: mpi.v1.ConfigUploadRequest.overview:type_name -> mpi.v1.FileOverview
-	20, // 26: mpi.v1.APIActionRequest.nginx_plus_action:type_name -> mpi.v1.NGINXPlusAction
-	21, // 27: mpi.v1.NGINXPlusAction.update_http_upstream_servers:type_name -> mpi.v1.UpdateHTTPUpstreamServers
-	22, // 28: mpi.v1.NGINXPlusAction.get_http_upstream_servers:type_name -> mpi.v1.GetHTTPUpstreamServers
-	23, // 29: mpi.v1.NGINXPlusAction.update_stream_servers:type_name -> mpi.v1.UpdateStreamServers
-	24, // 30: mpi.v1.NGINXPlusAction.get_upstreams:type_name -> mpi.v1.GetUpstreams
-	25, // 31: mpi.v1.NGINXPlusAction.get_stream_upstreams:type_name -> mpi.v1.GetStreamUpstreams
-	44, // 32: mpi.v1.UpdateHTTPUpstreamServers.servers:type_name -> google.protobuf.Struct
-	44, // 33: mpi.v1.UpdateStreamServers.servers:type_name -> google.protobuf.Struct
-	28, // 34: mpi.v1.Instance.instance_meta:type_name -> mpi.v1.InstanceMeta
-	29, // 35: mpi.v1.Instance.instance_config:type_name -> mpi.v1.InstanceConfig
-	30, // 36: mpi.v1.Instance.instance_runtime:type_name -> mpi.v1.InstanceRuntime
-	0,  // 37: mpi.v1.InstanceMeta.instance_type:type_name -> mpi.v1.InstanceType
-	36, // 38: mpi.v1.InstanceConfig.actions:type_name -> mpi.v1.InstanceAction
-	37, // 39: mpi.v1.InstanceConfig.agent_config:type_name -> mpi.v1.AgentConfig
-	32, // 40: mpi.v1.InstanceRuntime.nginx_runtime_info:type_name -> mpi.v1.NGINXRuntimeInfo
-	33, // 41: mpi.v1.InstanceRuntime.nginx_plus_runtime_info:type_name -> mpi.v1.NGINXPlusRuntimeInfo
-	35, // 42: mpi.v1.InstanceRuntime.nginx_app_protect_runtime_info:type_name -> mpi.v1.NGINXAppProtectRuntimeInfo
-	31, // 43: mpi.v1.InstanceRuntime.instance_children:type_name -> mpi.v1.InstanceChild
-	34, // 44: mpi.v1.NGINXRuntimeInfo.stub_status:type_name -> mpi.v1.APIDetails
-	34, // 45: mpi.v1.NGINXPlusRuntimeInfo.stub_status:type_name -> mpi.v1.APIDetails
-	34, // 46: mpi.v1.NGINXPlusRuntimeInfo.plus_api:type_name -> mpi.v1.APIDetails
-	38, // 47: mpi.v1.AgentConfig.command:type_name -> mpi.v1.CommandServer
-	39, // 48: mpi.v1.AgentConfig.metrics:type_name -> mpi.v1.MetricsServer
-	40, // 49: mpi.v1.AgentConfig.file:type_name -> mpi.v1.FileServer
-	44, // 50: mpi.v1.AgentConfig.labels:type_name -> google.protobuf.Struct
-	45, // 51: mpi.v1.CommandServer.server:type_name -> mpi.v1.ServerSettings
-	46, // 52: mpi.v1.CommandServer.auth:type_name -> mpi.v1.AuthSettings
-	47, // 53: mpi.v1.CommandServer.tls:type_name -> mpi.v1.TLSSettings
-	2,  // 54: mpi.v1.CommandService.CreateConnection:input_type -> mpi.v1.CreateConnectionRequest
-	8,  // 55: mpi.v1.CommandService.UpdateDataPlaneStatus:input_type -> mpi.v1.UpdateDataPlaneStatusRequest
-	11, // 56: mpi.v1.CommandService.UpdateDataPlaneHealth:input_type -> mpi.v1.UpdateDataPlaneHealthRequest
-	13, // 57: mpi.v1.CommandService.Subscribe:input_type -> mpi.v1.DataPlaneResponse
-	7,  // 58: mpi.v1.CommandService.CreateConnection:output_type -> mpi.v1.CreateConnectionResponse
-	9,  // 59: mpi.v1.CommandService.UpdateDataPlaneStatus:output_type -> mpi.v1.UpdateDataPlaneStatusResponse
-	12, // 60: mpi.v1.CommandService.UpdateDataPlaneHealth:output_type -> mpi.v1.UpdateDataPlaneHealthResponse
-	14, // 61: mpi.v1.CommandService.Subscribe:output_type -> mpi.v1.ManagementPlaneRequest
-	58, // [58:62] is the sub-list for method output_type
-	54, // [54:58] is the sub-list for method input_type
-	54, // [54:54] is the sub-list for extension type_name
-	54, // [54:54] is the sub-list for extension extendee
-	0,  // [0:54] is the sub-list for field type_name
+	43, // 13: mpi.v1.InstanceHealth.timestamp:type_name -> google.protobuf.Timestamp
+	41, // 14: mpi.v1.UpdateDataPlaneHealthRequest.message_meta:type_name -> mpi.v1.MessageMeta
+	10, // 15: mpi.v1.UpdateDataPlaneHealthRequest.instance_healths:type_name -> mpi.v1.InstanceHealth
+	41, // 16: mpi.v1.DataPlaneResponse.message_meta:type_name -> mpi.v1.MessageMeta
+	42, // 17: mpi.v1.DataPlaneResponse.command_response:type_name -> mpi.v1.CommandResponse
+	41, // 18: mpi.v1.ManagementPlaneRequest.message_meta:type_name -> mpi.v1.MessageMeta
+	15, // 19: mpi.v1.ManagementPlaneRequest.status_request:type_name -> mpi.v1.StatusRequest
+	16, // 20: mpi.v1.ManagementPlaneRequest.health_request:type_name -> mpi.v1.HealthRequest
+	17, // 21: mpi.v1.ManagementPlaneRequest.config_apply_request:type_name -> mpi.v1.ConfigApplyRequest
+	18, // 22: mpi.v1.ManagementPlaneRequest.config_upload_request:type_name -> mpi.v1.ConfigUploadRequest
+	19, // 23: mpi.v1.ManagementPlaneRequest.action_request:type_name -> mpi.v1.APIActionRequest
+	26, // 24: mpi.v1.ManagementPlaneRequest.command_status_request:type_name -> mpi.v1.CommandStatusRequest
+	44, // 25: mpi.v1.ConfigApplyRequest.overview:type_name -> mpi.v1.FileOverview
+	44, // 26: mpi.v1.ConfigUploadRequest.overview:type_name -> mpi.v1.FileOverview
+	20, // 27: mpi.v1.APIActionRequest.nginx_plus_action:type_name -> mpi.v1.NGINXPlusAction
+	21, // 28: mpi.v1.NGINXPlusAction.update_http_upstream_servers:type_name -> mpi.v1.UpdateHTTPUpstreamServers
+	22, // 29: mpi.v1.NGINXPlusAction.get_http_upstream_servers:type_name -> mpi.v1.GetHTTPUpstreamServers
+	23, // 30: mpi.v1.NGINXPlusAction.update_stream_servers:type_name -> mpi.v1.UpdateStreamServers
+	24, // 31: mpi.v1.NGINXPlusAction.get_upstreams:type_name -> mpi.v1.GetUpstreams
+	25, // 32: mpi.v1.NGINXPlusAction.get_stream_upstreams:type_name -> mpi.v1.GetStreamUpstreams
+	45, // 33: mpi.v1.UpdateHTTPUpstreamServers.servers:type_name -> google.protobuf.Struct
+	45, // 34: mpi.v1.UpdateStreamServers.servers:type_name -> google.protobuf.Struct
+	28, // 35: mpi.v1.Instance.instance_meta:type_name -> mpi.v1.InstanceMeta
+	29, // 36: mpi.v1.Instance.instance_config:type_name -> mpi.v1.InstanceConfig
+	30, // 37: mpi.v1.Instance.instance_runtime:type_name -> mpi.v1.InstanceRuntime
+	0,  // 38: mpi.v1.InstanceMeta.instance_type:type_name -> mpi.v1.InstanceType
+	36, // 39: mpi.v1.InstanceConfig.actions:type_name -> mpi.v1.InstanceAction
+	37, // 40: mpi.v1.InstanceConfig.agent_config:type_name -> mpi.v1.AgentConfig
+	32, // 41: mpi.v1.InstanceRuntime.nginx_runtime_info:type_name -> mpi.v1.NGINXRuntimeInfo
+	33, // 42: mpi.v1.InstanceRuntime.nginx_plus_runtime_info:type_name -> mpi.v1.NGINXPlusRuntimeInfo
+	35, // 43: mpi.v1.InstanceRuntime.nginx_app_protect_runtime_info:type_name -> mpi.v1.NGINXAppProtectRuntimeInfo
+	31, // 44: mpi.v1.InstanceRuntime.instance_children:type_name -> mpi.v1.InstanceChild
+	34, // 45: mpi.v1.NGINXRuntimeInfo.stub_status:type_name -> mpi.v1.APIDetails
+	34, // 46: mpi.v1.NGINXPlusRuntimeInfo.stub_status:type_name -> mpi.v1.APIDetails
+	34, // 47: mpi.v1.NGINXPlusRuntimeInfo.plus_api:type_name -> mpi.v1.APIDetails
+	38, // 48: mpi.v1.AgentConfig.command:type_name -> mpi.v1.CommandServer
+	39, // 49: mpi.v1.AgentConfig.metrics:type_name -> mpi.v1.MetricsServer
+	40, // 50: mpi.v1.AgentConfig.file:type_name -> mpi.v1.FileServer
+	45, // 51: mpi.v1.AgentConfig.labels:type_name -> google.protobuf.Struct
+	46, // 52: mpi.v1.CommandServer.server:type_name -> mpi.v1.ServerSettings
+	47, // 53: mpi.v1.CommandServer.auth:type_name -> mpi.v1.AuthSettings
+	48, // 54: mpi.v1.CommandServer.tls:type_name -> mpi.v1.TLSSettings
+	2,  // 55: mpi.v1.CommandService.CreateConnection:input_type -> mpi.v1.CreateConnectionRequest
+	8,  // 56: mpi.v1.CommandService.UpdateDataPlaneStatus:input_type -> mpi.v1.UpdateDataPlaneStatusRequest
+	11, // 57: mpi.v1.CommandService.UpdateDataPlaneHealth:input_type -> mpi.v1.UpdateDataPlaneHealthRequest
+	13, // 58: mpi.v1.CommandService.Subscribe:input_type -> mpi.v1.DataPlaneResponse
+	7,  // 59: mpi.v1.CommandService.CreateConnection:output_type -> mpi.v1.CreateConnectionResponse
+	9,  // 60: mpi.v1.CommandService.UpdateDataPlaneStatus:output_type -> mpi.v1.UpdateDataPlaneStatusResponse
+	12, // 61: mpi.v1.CommandService.UpdateDataPlaneHealth:output_type -> mpi.v1.UpdateDataPlaneHealthResponse
+	14, // 62: mpi.v1.CommandService.Subscribe:output_type -> mpi.v1.ManagementPlaneRequest
+	59, // [59:63] is the sub-list for method output_type
+	55, // [55:59] is the sub-list for method input_type
+	55, // [55:55] is the sub-list for extension type_name
+	55, // [55:55] is the sub-list for extension extendee
+	0,  // [0:55] is the sub-list for field type_name
 }
 
 func init() { file_mpi_v1_command_proto_init() }
