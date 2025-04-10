@@ -18,7 +18,7 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
-    "id": 4,
+    "id": 3,
     "links": [],
     "panels": [
         {
@@ -31,79 +31,45 @@
                 "overrides": []
             },
             "gridPos": {
-                "h": 7,
+                "h": 13,
                 "w": 24,
                 "x": 0,
                 "y": 0
             },
-            "id": 3,
-            "options": {
-                "dedupStrategy": "none",
-                "enableLogDetails": true,
-                "prettifyLogMessage": false,
-                "showCommonLabels": true,
-                "showLabels": false,
-                "showTime": false,
-                "sortOrder": "Descending",
-                "wrapLogMessage": false
-            },
-            "pluginVersion": "11.4.0",
-            "targets": [
+            "id": 4,
+            "links": [
                 {
-                    "datasource": {
-                        "type": "loki",
-                        "uid": "otel-loki-scraper"
-                    },
-                    "editorMode": "builder",
-                    "expr": "{service_name=\"nginx.agent\"} |= ``",
-                    "queryType": "range",
-                    "refId": "A"
+                    "title": "Agent Health Status",
+                    "url": "http://localhost:3002/d/fdris4hclbqiob/nginx-plus?orgId=1&from=2025-04-10T11:55:30.551Z&to=2025-04-10T12:00:30.551Z&timezone=browser&refresh=5s&viewPanel=panel-6"
                 }
             ],
-            "title": "NGINX Plus Access + Error Logs",
-            "transparent": true,
-            "type": "logs"
-        },
-        {
-            "datasource": {
-                "type": "loki",
-                "uid": "otel-loki-scraper"
-            },
-            "fieldConfig": {
-                "defaults": {},
-                "overrides": []
-            },
-            "gridPos": {
-                "h": 8,
-                "w": 24,
-                "x": 0,
-                "y": 7
-            },
-            "id": 2,
             "options": {
                 "dedupStrategy": "none",
+                "enableInfiniteScrolling": false,
                 "enableLogDetails": true,
                 "prettifyLogMessage": false,
                 "showCommonLabels": false,
                 "showLabels": false,
                 "showTime": false,
                 "sortOrder": "Descending",
-                "wrapLogMessage": false
+                "wrapLogMessage": true
             },
-            "pluginVersion": "11.4.0",
+            "pluginVersion": "11.5.2",
             "targets": [
                 {
                     "datasource": {
                         "type": "loki",
                         "uid": "otel-loki-scraper"
                     },
-                    "editorMode": "builder",
-                    "expr": "{service_name=\"nginx.agent\"} |= `DEBUG`",
+                    "direction": "backward",
+                    "editorMode": "code",
+                    "expr": "{service_name=\"nginx.agent\"} | log_file_name=\"agent.log\"",
+                    "legendFormat": "",
                     "queryType": "range",
                     "refId": "A"
                 }
             ],
-            "title": "NGINX Agent [DEBUG]",
+            "title": "NGINX Agent Logs",
             "type": "logs"
         },
         {
@@ -116,37 +82,94 @@
                 "overrides": []
             },
             "gridPos": {
-                "h": 6,
-                "w": 24,
+                "h": 15,
+                "w": 12,
                 "x": 0,
-                "y": 15
+                "y": 13
             },
-            "id": 1,
+            "id": 6,
+            "links": [
+                {
+                    "title": "NGINX Health Status",
+                    "url": "http://localhost:3002/d/fdris4hclbqiob/nginx-plus?orgId=1&from=2025-04-10T11:55:30.551Z&to=2025-04-10T12:00:30.551Z&timezone=browser&refresh=5s&viewPanel=panel-6"
+                }
+            ],
             "options": {
                 "dedupStrategy": "none",
+                "enableInfiniteScrolling": false,
                 "enableLogDetails": true,
                 "prettifyLogMessage": false,
-                "showCommonLabels": true,
-                "showLabels": true,
-                "showTime": true,
+                "showCommonLabels": false,
+                "showLabels": false,
+                "showTime": false,
                 "sortOrder": "Descending",
-                "wrapLogMessage": false
+                "wrapLogMessage": true
             },
-            "pluginVersion": "11.4.0",
+            "pluginVersion": "11.5.2",
             "targets": [
                 {
                     "datasource": {
                         "type": "loki",
                         "uid": "otel-loki-scraper"
                     },
-                    "editorMode": "builder",
-                    "expr": "{service_name=\"nginx.agent\"}",
+                    "direction": "backward",
+                    "editorMode": "code",
+                    "expr": "{service_name=\"nginx.agent\"} | log_file_name=\"nginx_access.log\"",
                     "queryType": "range",
                     "refId": "A"
                 }
             ],
-            "title": "Logs [Agent + NGINX Plus]",
-            "transparent": true,
+            "title": "NGINX Plus Access Logs",
+            "type": "logs"
+        },
+        {
+            "datasource": {
+                "type": "loki",
+                "uid": "otel-loki-scraper"
+            },
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 15,
+                "w": 12,
+                "x": 12,
+                "y": 13
+            },
+            "id": 5,
+            "links": [
+                {
+                    "title": "NGINX Health Status",
+                    "url": "http://localhost:3002/d/fdris4hclbqiob/nginx-plus?orgId=1&from=2025-04-10T11:55:30.551Z&to=2025-04-10T12:00:30.551Z&timezone=browser&refresh=5s&viewPanel=panel-6"
+                }
+            ],
+            "options": {
+                "dedupStrategy": "none",
+                "enableInfiniteScrolling": false,
+                "enableLogDetails": true,
+                "prettifyLogMessage": false,
+                "showCommonLabels": false,
+                "showLabels": false,
+                "showTime": false,
+                "sortOrder": "Descending",
+                "wrapLogMessage": true
+            },
+            "pluginVersion": "11.5.2",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "loki",
+                        "uid": "otel-loki-scraper"
+                    },
+                    "direction": "backward",
+                    "editorMode": "code",
+                    "expr": "{service_name=\"nginx.agent\"} | log_file_name=\"nginx_error.log\"",
+                    "queryType": "range",
+                    "refId": "A"
+                }
+            ],
+            "title": "NGINX Plus Error Logs",
             "type": "logs"
         }
     ],
@@ -164,6 +187,6 @@
     "timezone": "browser",
     "title": "NGINX Plus Logs",
     "uid": "beiasbp4mq4n4b",
-    "version": 9,
+    "version": 15,
     "weekStart": ""
 }
